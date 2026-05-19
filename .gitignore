@@ -1,0 +1,4 @@
+build/
+assets/images/originals/
+assets/fonts/
+.DS_Store
