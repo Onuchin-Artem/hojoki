@@ -9,10 +9,10 @@
   align(center, body)
 }
 
-// Justified prose with Ukrainian hyphenation (foreword, descriptions, endnotes).
-// Prose paragraphs use tighter leading/spacing than verse and may break across pages.
+// Prose: justified with hyphenation + optimized line-breaking. Typst leaves the last
+// (short) line of each paragraph flush-left automatically, so short lines aren't stretched.
 #let prose(body) = {
-  set par(justify: true, leading: 0.72em, spacing: 1.2em)
+  set par(justify: true, linebreaks: "optimized", leading: 0.72em, spacing: 1.2em)
   set text(hyphenate: true)
   body
 }
@@ -38,7 +38,7 @@
 #let photo-desc(name, body) = page(fill: photo-bg, margin: 0pt, header: none, footer: none,
   block(width: 100%, height: 100%, inset: (left: 26mm, right: 14mm, y: 24mm), {
     set text(font: sans, size: 10pt, fill: ink, hyphenate: true)
-    set par(leading: 0.95em, spacing: 1.3em, justify: true)
+    set par(leading: 0.95em, spacing: 1.3em, justify: true, linebreaks: "optimized")
     v(1fr)
     align(right, text(weight: "bold", size: 12.5pt, fill: red)[#name])
     v(1.4em)

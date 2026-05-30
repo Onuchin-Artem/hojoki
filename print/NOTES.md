@@ -35,7 +35,12 @@ Working log for the Typst PDF. Authoritative *design* decisions live in
 - Chapter: opens recto, title left-aligned bold red 18 pt, `v(6mm)` above / `v(13mm)` below.
 - Strophes are unbreakable blocks; **page breaks placed by hand** in the source.
 - Prose justified + hyphenated (`lang: "uk"`, `hyphenate: true`); verse ragged.
-- Global show rule: Latin-script runs → italic.
+- Global show rules (in `body-rules`): Latin-script runs → italic; **Ukrainian NBSP** —
+  short prepositions/conjunctions (в, у, з, і, а, й, о, та, до, на, по, за, із, зі, що, як,
+  бо, чи, не…) glued to the next word, and NBSP before em-dashes. Applies book-wide (prose
+  + verse, front + back matter). Source `\u{00A0}` before em-dashes is still fine (no double).
+- Line-break **costs** (`set text(costs:)`): hyphenation **100%** (normal — was 2000%, which
+  killed hyphenation and made lines loose), runt 1000%, widow/orphan 500%.
 - Photo box **85 × 113 mm, `fit: cover`**, vertically centered, gutter-biased, 14 mm inner;
   background `#e8e6dc`; no header/folio. Recto photo identical on every spread; verso mirrors.
 
@@ -68,13 +73,51 @@ Rebuild: `python3 print/tools/build_body.py && python3 print/tools/build_endnote
 - Endnotes numbered, italic lemma + justified prose, each on a new page; superscript refs in body.
 - Photo system (uniform box, gutter bias, single spreads + symmetric diptych) in components.
 
-## TODO (resume here) — tuning pass
+## Front-matter tuning pass (in progress) — what's settled
 
-1. **Closing signature** lands on its own recto instead of the foot of the «тиша» verso —
-   Typst won't seat the block after «тиша» in the tight bottom margin. Needs a page-bottom
-   placement that doesn't overflow (the obvious `place(bottom)` anchors to the flow line).
-2. **Blank pages show a folio** (auto-inserted recto/verso blanks). Suppress folio/header on blanks.
-3. **Hand-placed verse page breaks** — currently auto-flow; place breaks deliberately per the
-   user's wishes (no stranded lines, logical stanza boundaries).
-4. Front-matter / back-matter polish; revisit per-section as we go.
-5. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
+Working **page-by-page with the user**, who dictates exact line breaks; render each page and
+show it before moving on. Workflow: per page `typst compile --root . --font-path
+assets/fonts/print --pages N --ppi 220 main.typ build/x.png` **and** the matching `.pdf` —
+always regenerate PNG + PDF from the *same* source state (mismatched states confused the user).
+For spreads: `python3 tools/spreads.py FIRST LAST 200`.
+
+**Line-break rules the user wants (apply everywhere):**
+- Prefer **full-width justified** prose with hyphenation on. Use a manual break only where the
+  user asks, at the exact word they name.
+- A **bare `\`** is `linebreak(justify: false)`: it leaves the preceding line *ragged/short*
+  (not stretched). Use it when the user wants that line **left-aligned**.
+- **`#linebreak(justify: true)`** forces the break *and* stretches the preceding line to the
+  margin. Use it when the preceding line is word-rich enough that a full line looks clean.
+- The user chooses per line: justify the break only if the line stretches cleanly; otherwise
+  left-align (e.g. «Дійсно… ніскільки» is left; «…воно було саме таким» is justified).
+- Never split the author's name — global rule `Камо но Тьоме[йя]` already NBSP-glues it.
+- Avoid one-word last lines: NBSP-glue the last two words instead of forcing a manual break.
+
+**Pages done (p1–p11 = all front matter; `build/front-matter.pdf`):**
+- **Передмова (p5):** para 1 break after «практики,» (bare `\`); «розкриває» reflow; para 3
+  «…воно було саме таким» uses `linebreak(justify:true)`; «Дійсно… ніскільки» bare `\`.
+- **Подяка (p6):** `prose[]` but with `#set par(spacing: 2em)` for **poetry-style stanza gaps**;
+  couplets («…відгуки», «…Дгарми.») left-aligned via bare `\`.
+- **Зречення (p7):** verse line broken after «ніде,». **Signature** rebuilt: not `credit()` but
+  an inline `block` → `pad(right: 7mm, align(right)[…])`, sans **6.5 pt** italic grey, right-edge
+  aligned to the poem's right margin (manual 7 mm inset; tied to this page's geometry). **Reuse
+  this exact signature style for the body's closing «Написано монахом Ренʼіном…» credit.**
+- **Colophon (p4):** bottom spacer reduced `13mm → 2.3mm` so the license block's bottom lines up
+  with «Передмова»'s last line; © falls just below (verified on the p4|p5 spread, aligned ±1 px).
+- **Text change (both `source/hojoki.md` + `main.typ`):** teacher list replaced with
+  «Дякую усім моїм Вчителям Дгарми. Завдяки їхній доброті моє зречення поглиблюється.»
+  (`source/hojoki.md` is the canonical input for pandoc/epub/web — currently empty scaffolds.)
+
+See memory `manual-linebreak-justify` for the `\` vs `linebreak(justify:true)` rule.
+
+## TODO (resume here)
+
+1. **Front matter:** essentially done (p1–11). Title pages (p3, p9) still use **serif Cormorant**
+   while the half-title (p1) is sans — user hasn't decided whether to unify.
+2. **Back matter next**, then the body (user's order: front → back → body). Back matter =
+   diptych, endnotes (each on own page), «Зміст» ToC, ensō. Apply the same line-break rules.
+3. **Body closing signature** — reuse the p7 signature style (6.5 pt, right-aligned to poem edge).
+4. **Closing signature** currently lands on its own recto instead of the foot of the «тиша» verso.
+5. **Blank pages show a folio** — suppress folio/header on auto-inserted blanks.
+6. **Hand-placed verse page breaks** in the body — currently auto-flow.
+7. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
