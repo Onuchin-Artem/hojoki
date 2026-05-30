@@ -121,3 +121,12 @@ See memory `manual-linebreak-justify` for the `\` vs `linebreak(justify:true)` r
 5. **Blank pages show a folio** — suppress folio/header on auto-inserted blanks.
 6. **Hand-placed verse page breaks** in the body — currently auto-flow.
 7. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
+8. **Bleed / print-prep — confirm specs with the print-on-demand company first.** Trim is
+   B6 125 × 176 mm. Reading margins are fine for POD (gutter 19 mm, outer/top/bottom ample).
+   **But the full-page grey backgrounds** (photo pages, «Ретрітна хатинка» description, diptych)
+   run to the trim edge with **no bleed** (`page(fill: photo-bg, margin: 0pt)`) — risks a white
+   sliver after trimming. Before final export: ask the POD vendor for their **bleed (usually
+   3 mm), total document size, and crop-mark** requirements, then add bleed to `layout.typ` +
+   the photo pages (enlarge page to ~131 × 182 mm, extend the grey fills into the bleed). White
+   text pages don't need it, but the whole interior PDF must be exported at the bleed size.
+   **This is a decision to align with the printer — do not hardcode a bleed until confirmed.**
