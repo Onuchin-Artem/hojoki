@@ -41,41 +41,40 @@ Working log for the Typst PDF. Authoritative *design* decisions live in
 
 ## File map
 
-- `main.typ` — entry point. **In progress:** full front matter + «Пролог» (front matter
-  validated; remaining chapters + back matter pending). Front matter currently inline.
+- `main.typ` — entry point: front matter (inline) → `#include "body.typ"` → back matter
+  (diptych, `#include "endnotes.typ"`, «Зміст» ToC from `_toc` state, ensō).
 - `template/typography.typ` — colors, fonts, body defaults, Latin-italic global rule.
-- `template/layout.typ` — page engine: geometry, recto-only running header + folio with
-  per-page suppression (`_no-head` / `_no-folio` state), `book()` wrapper, `chapter()`.
-- `template/components.typ` — `credit()` (signature), `prose()`, `verse()` (unbreakable
-  strophes), `fm-heading()` (centered front-matter titles). **TODO:** `photo-spread()`,
-  `diptych()`, title-page helpers.
-- `_preview-photos.typ` — reference preview of all three photo spreads (the validated photo
-  system). To be folded into `components.typ`.
+- `template/layout.typ` — page engine. **Headers/folio are query-driven** (`<chap>` metadata
+  markers), NOT live state — state read in a header resolves a page late and showed the wrong
+  chapter title on openings. `chapter(title, restart:false)`; `restart:true` on the first
+  chapter restarts the folio at 1. `_toc` state feeds the table of contents.
+- `template/components.typ` — `prose()`, `verse()` (unbreakable strophes), `fm-heading()`,
+  `credit()` (signature), `photo-page()` / `photo-desc()` / `photo-spread()` / `diptych()`,
+  `endnote-ref()` (superscript) / `endnote(n, body)`.
+- `body.typ`, `endnotes.typ` — **generated** (do not hand-edit). Regenerate with the tools below.
+- `tools/build_body.py` — `source/hojoki.md` → `body.typ` (chapters+verse, NBSP, `[^x]` →
+  `#endnote-ref(n)`, Amitābha spread before «Моя маленька хатинка», closing signature).
+- `tools/build_endnotes.py` — `source/footnotes.md` → `endnotes.typ` (numbered, each on its own
+  page; **/Джерела** list). Numbering follows body first-appearance order.
+
+Rebuild: `python3 print/tools/build_body.py && python3 print/tools/build_endnotes.py && make -C print`
 
 ## Done
 
-- Engine: page geometry, recto/verso folio, recto-only running header, per-page suppression.
-- Chapter opening (recto start, high left title, hand page breaks, unbreakable strophes).
-- Body verse rendering validated on «Пролог».
-- Text policy: prose justified+hyphenated, verse ragged, Latin-italic global rule.
-- Photo system validated (uniform box, gutter bias, single spreads + symmetric diptych).
-- **Front matter built & validated** (inline in main.typ): half-title (top-aligned), colophon
-  (designed), full title, foreword, acknowledgments, «Зречення» + signature, second title,
-  retreat-house spread. Each section fits one page.
+- **Whole book renders** → `build/hojoki.pdf` (~114 pp): front matter, all 15 chapters,
+  Amitābha spread, diptych, endnotes, «Зміст», ensō.
+- Query-driven recto running header (correct chapter title; suppressed on openings/verso/front matter).
+- Folio restarts at 1 on «Пролог» (footer shows `counter(page)`, not the physical page).
+- Endnotes numbered, italic lemma + justified prose, each on a new page; superscript refs in body.
+- Photo system (uniform box, gutter bias, single spreads + symmetric diptych) in components.
 
-## TODO (resume here)
+## TODO (resume here) — tuning pass
 
-1. Bake `photo-spread(name, desc, img)`, `diptych(left, right)`, and title-page helpers into
-   `template/components.typ` (photo pages = two B6 pages, grey fill, header/folio suppressed).
-   (`prose`, `verse`, `fm-heading`, `credit` are done.)
-2. Port the full body from `source/hojoki.md` — all chapters — with **manual** line breaks
-   (NBSP before em-dash, `ʼ` apostrophe) and **manual** page breaks; no strophe split across pages.
-3. Place photo spreads: retreat house (front matter, done), Amitābha (before «Моя маленька
-   хатинка»), back-matter diptych (clouds + monks). Captions from `source/captions.md`.
-4. Closing «…тиша» page with the author colophon-signature (italic, smaller).
-5. **Back matter — same rules as front matter** (10 pt, tight margins, centered 14 pt titles):
-   endnotes from `source/footnotes.md` (**each endnote begins on a new page**), table of
-   contents, ensō calligraphy page.
-6. Body folio: decide whether the body restarts at 1 (front matter unnumbered) or continues.
-7. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
-8. Build `build/hojoki.pdf` and walk through page by page.
+1. **Closing signature** lands on its own recto instead of the foot of the «тиша» verso —
+   Typst won't seat the block after «тиша» in the tight bottom margin. Needs a page-bottom
+   placement that doesn't overflow (the obvious `place(bottom)` anchors to the flow line).
+2. **Blank pages show a folio** (auto-inserted recto/verso blanks). Suppress folio/header on blanks.
+3. **Hand-placed verse page breaks** — currently auto-flow; place breaks deliberately per the
+   user's wishes (no stranded lines, logical stanza boundaries).
+4. Front-matter / back-matter polish; revisit per-section as we go.
+5. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.

@@ -155,35 +155,38 @@
 ]
 
 // ── Main body ──────────────────────────────────────────────────────────────
-// Body restores the full canon margins.
+// Full canon margins, 11 pt. Folio restarts at 1 on «Пролог» (in chapter()).
 #set page(margin: (inside: 19mm, outside: 26mm, top: 32mm, bottom: 40mm))
-#set text(size: 11pt)  // body: main text + verses a touch larger
+#set text(size: 11pt)
 
-#chapter("Пролог")
+#include "body.typ"
 
-Потік ріки ніколи не зникає, \
-вода ніколи не буває однаковою.
+// ── Back matter ──────────────────────────────────────────────────────────────
+// Same rules as front matter: 10 pt, tight margins, centered titles.
+#set page(margin: (inside: 19mm, outside: 18mm, top: 14mm, bottom: 25mm))
+#set text(size: 10pt)
 
-Бульбашки пливуть на поверхні течії, \
-лопаються, виникають знов \
-і ніколи не тривають.
+// Blank recto (breathing space after «тиша») → clouds (V) + monks (R) diptych
+#pagebreak(to: "odd")
+#diptych("/assets/images/processed/Clouds.jpeg", "/assets/images/processed/Monks.jpeg")
 
-Вони\u{00A0}— як люди і їхні оселі.
+// Endnotes — begin on a recto; each note on its own page
+#pagebreak(to: "odd")
+#include "endnotes.typ"
 
+// Table of contents
+#pagebreak(to: "odd")
+#fm-heading("Зміст")
+#context {
+  let rows = ()
+  for e in _toc.get() {
+    rows.push(e.title)
+    rows.push(text(fill: grey)[#e.page])
+  }
+  grid(columns: (1fr, auto), column-gutter: 8pt, row-gutter: 0.9em, ..rows)
+}
+
+// ensō calligraphy — final verso
 #pagebreak()
-
-У нашій коштовній столиці \
-прекрасні будівлі стоять у ряд, \
-їхні гребні змагаються за першість.
-
-Доми еліти\u{00A0}— ніби були тут вічно, \
-але розпитай\u{00A0}— і переконаєшся: \
-дуже рідко трапляються будинки \
-з довгою історією.
-
-Одного року дім руйнується, \
-наступного\u{00A0}— відбудовується, \
-зрештою великі доми \
-змінюються на доми поменші, \
-саме як люди, \
-що живуть у них.
+#page(header: none, footer: none,
+  align(center + horizon, image("/assets/images/processed/ensho.jpg", height: 70mm)))
