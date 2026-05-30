@@ -12,10 +12,8 @@
 
 // Body text defaults
 #let body-rules(doc) = {
-  set text(font: sans, size: 11.5pt, fill: ink, lang: "uk")
+  set text(font: sans, size: 11pt, fill: ink, lang: "uk")
   set par(leading: 0.9em, spacing: 2em, justify: false)
-  // never split a strophe across a page break
-  show par: it => block(it, breakable: false)
   // global rule: Latin-script runs (foreign names) set in italic
   show regex("[A-Za-zÀ-ÿĀ-ſ]+(?:[ -][A-Za-zÀ-ÿĀ-ſ]+)*"): it => text(style: "italic", it)
   doc

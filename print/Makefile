@@ -6,7 +6,7 @@ OUT    = ../build/hojoki.pdf
 .PHONY: all watch
 all:
 	@mkdir -p ../build
-	$(TYPST) compile --font-path $(FONTS) $(SRC) $(OUT)
+	$(TYPST) compile --root .. --font-path $(FONTS) $(SRC) $(OUT)
 
 watch:
-	$(TYPST) watch --font-path $(FONTS) $(SRC) $(OUT)
+	$(TYPST) watch --root .. --font-path $(FONTS) $(SRC) $(OUT)

@@ -65,7 +65,7 @@ Cyrillic-capable equivalent.)
 - **Margins (Van de Graaf canon, gutter-adjusted):** inner 19 / outer 26 / top 32 / bottom 40 mm.
   Outer > inner, bottom > top — generous, grounded, classic.
 - **Header/footer placement:** `header-ascent` 22 mm (high, clear of trim); `footer-descent` 20 mm.
-- **Body:** Arsenal 11.5 pt, leading 0.9em, **strophe spacing 2em**, top-aligned on ordinary
+- **Body:** Arsenal 11 pt, leading 0.9em, **strophe spacing 2em**, top-aligned on ordinary
   pages. Special pages (chapter openings, «Зречення», closing «…тиша», title pages) are
   vertically centered.
 - **Folio:** centered at the bottom, with a trailing dot.
@@ -91,6 +91,24 @@ The print layout is hand-tuned, not auto-flowed. Specifically:
   first stanza. **No running header** on the opening page.
 - **Page breaks are placed by hand** (e.g. «Пролог» page 1 ends on «Вони — як люди і їхні
   оселі.»). **Stanzas never split across a page** — each strophe is an unbreakable block.
+
+### Front matter & back matter (print)
+
+Front matter (half-title, full title, colophon, foreword, acknowledgments, «Зречення»,
+second title) and **back matter** (endnotes, table of contents, calligraphy) share one
+set of rules, distinct from the body:
+
+- **Font:** 10 pt — 1 pt smaller than the 11 pt body, so each text section fits a single page.
+- **Margins:** inner **19** (gutter matched to the body) / outer **18** / top **14** /
+  bottom **25** mm — tighter than the body; text begins high.
+- **Section titles:** **centered**, Arsenal bold **14 pt** red — smaller than chapter titles —
+  sitting at the top with a tight ~3.5 mm gap to the text. No running header in front matter.
+- **Prose:** justified + hyphenated, paragraph spacing **1.2em**.
+- **Half-title:** title only, serif (Cormorant Garamond) ~20 pt, **one line, top-aligned**.
+- **Colophon:** centered, designed — the book title kept readable (11 pt bold), everything
+  else **7 pt** with empty-line gaps between logical blocks.
+- **Signature / credit** (end of a poem): Arsenal italic **7.5 pt** grey, **centered**, kept as
+  one unbreakable block close to the verse, with an empty line before the year.
 
 ### Text alignment & hyphenation
 
