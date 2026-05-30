@@ -33,8 +33,8 @@ This document defines the page-by-page layout of the book. Implementation toolin
 
 - Every chapter begins on R.
 - A 1/3 page vertical gap separates the chapter title from the start of the chapter text.
-- A red running header appears on all body pages.
-- The running header is **omitted** on: blank pages, chapter title pages, and photo spreads.
+- A red running header (the **chapter title**) appears on **recto pages only**; verso pages carry no running header (the book title is not repeated). The folio appears on both.
+- The running header is **omitted** on: blank pages, chapter title (opening) pages, and photo spreads.
 - If a chapter ends on R, insert a blank V before the next chapter so the next chapter still opens on R.
 - Page numbers continue across photo spreads but are **not printed** on them.
 
@@ -73,7 +73,7 @@ The clouds + monks pages form a diptych on a single spread — see "Diptych Rule
 
 Every image is paired with its context on the **same spread**, so image and text are visible together when the book is open. Layout:
 
-- **V (left)** = text / description — italic, smaller kegel, generous leading
+- **V (left)** = text / description — **upright** (not italic), smaller, **justified with hyphenation**, generous leading, vertically centred. The picture name is **bold, red, right-aligned** (toward the gutter).
 - **R (right)** = image
 
 Applies to:
@@ -83,7 +83,8 @@ Applies to:
 Typography on photo spreads:
 - No running header
 - No printed page numbers (numbering continues internally)
-- Background tone uniform across all photo spreads — exact tone TBD, minimalist and consistent
+- Background tone uniform across all photo spreads: light grey **`#e8e6dc`**, full page.
+- All photos share **one uniform box (85 × 113 mm, `fit: cover`)**, vertically centred, shifted toward the gutter (outer margin > inner; safe **14 mm** inner). The recto photo sits in the **same place on every spread**; the verso photo is its mirror. (3 photos are portrait, retreat-hut is landscape → the uniform box crops the landscape to a centre slice, accepted for consistency.)
 
 ### Diptych Rule
 

@@ -40,22 +40,35 @@ Cyrillic-capable equivalent.)
 | Element | Font | Style | Size | Color |
 |---------|------|-------|------|-------|
 | Title (book title, title pages) | Cormorant Garamond (serif) | — | large | text `#252120` |
-| Chapter header | Arsenal (sans) | bold | — | red `#e46340` |
-| Running header | Arsenal (sans) | italic | smaller than body | red `#e46340` |
+| Chapter header | Arsenal (sans) | bold, **left-aligned** | 18 pt | red `#e46340` |
+| Running header (recto only) | Arsenal (sans) | italic | 9 pt | red `#e46340` |
 | Credit (after a verse / end of poem) | Arsenal (sans) | italic | smaller than body | grey `#646161` |
-| Page number (folio) | Arsenal (sans) | — | — | black |
+| Photo name | Arsenal (sans) | bold, right-aligned | 12.5 pt | red `#e46340` |
+| Page number (folio) | Arsenal (sans) | — | 8.5 pt | black |
 
 ### Running header & folio (print)
 
-- **Placement:** running header centered at the top; folio (page number) centered at the bottom.
+- **Recto only.** The running header (chapter title) appears on **recto pages only**;
+  verso pages carry **no** running header (the book title is not repeated). The folio
+  appears on **both** verso and recto.
+- **Placement:** running header centered at the top, set ~22 mm into the top margin
+  (`header-ascent`) so it sits high and well clear of the trim; folio centered at the bottom.
 - **Folio format:** the page number is followed by a dot — e.g. `53.`
-- **Begins at the first chapter** (start of the main body). Front matter — foreword,
-  acknowledgments, the poem «Зречення», title pages, descriptions — carries **no**
-  running header.
-- **Omitted on:** blank pages, chapter-title (opening) pages, and illustration/photo
-  spreads. (The folio keeps counting internally but is not printed on photo spreads.)
-- Recto carries the **chapter title**; verso carries the **book title** «Думки у
-  ретрітній хатинці».
+- **Begins at the first chapter** «Пролог» (start of the main body). Front matter — foreword,
+  acknowledgments, the poem «Зречення», title pages, descriptions — carries **no** running header.
+- **Omitted on:** blank pages, chapter-title (opening) pages, and photo spreads.
+  (The folio keeps counting internally but is not printed on photo spreads.)
+
+### Body page metrics (print)
+
+- **Trim:** B6 — 125 × 176 mm.
+- **Margins (Van de Graaf canon, gutter-adjusted):** inner 19 / outer 26 / top 32 / bottom 40 mm.
+  Outer > inner, bottom > top — generous, grounded, classic.
+- **Header/footer placement:** `header-ascent` 22 mm (high, clear of trim); `footer-descent` 20 mm.
+- **Body:** Arsenal 11.5 pt, leading 0.9em, **strophe spacing 2em**, top-aligned on ordinary
+  pages. Special pages (chapter openings, «Зречення», closing «…тиша», title pages) are
+  vertically centered.
+- **Folio:** centered at the bottom, with a trailing dot.
 
 ### Verse & spacing control (print)
 
@@ -68,3 +81,37 @@ The print layout is hand-tuned, not auto-flowed. Specifically:
   "flying rows."
 - **Deliberate vertical space.** Title pages and illustration/photo pages are
   individually designed, with the amount of whitespace chosen by hand.
+
+### Chapter openings (print)
+
+- Every chapter **begins on a recto**.
+- Chapter title: **left-aligned**, Arsenal **bold**, 18 pt, red `#e46340`. Left alignment
+  echoes the cover and places the title near the gutter (centre of the open spread).
+- Title sits **high** on the page (~6 mm below the text-block top), with a ~13 mm gap to the
+  first stanza. **No running header** on the opening page.
+- **Page breaks are placed by hand** (e.g. «Пролог» page 1 ends on «Вони — як люди і їхні
+  оселі.»). **Stanzas never split across a page** — each strophe is an unbreakable block.
+
+### Text alignment & hyphenation
+
+- **Verse:** ragged-left, **no** justification. Line breaks are meaningful and set by hand
+  (NBSP before em-dash, `ʼ` apostrophe — see TYPOGRAPHY.md).
+- **Prose** (photo descriptions, foreword, acknowledgments, endnotes): **justified with
+  automatic hyphenation** (Ukrainian patterns) to keep word spacing even.
+- **Global rule:** runs of Latin-script text (foreign names — Garchen Buddhist Institute,
+  Hōjōki, Matthew Stavros…) are set in **italic** automatically.
+
+### Photo spreads (print)
+
+- **Background:** light grey `#e8e6dc`, full page, on every photo page. **No** running header,
+  **no** printed folio (the folio keeps counting internally).
+- **Uniform photo box:** every photo is placed in one identical box — **85 × 113 mm,
+  `fit: cover`** — vertically centred, shifted toward the gutter (outer margin > inner), with
+  a safe **14 mm** inner margin. The recto photo sits in the **same place on every spread**;
+  the verso photo is its mirror. (3 photos are portrait; retreat-hut is landscape, so the
+  uniform box crops it to a centre slice — accepted for consistency.)
+- **Single-photo spread** (retreat house; Amitābha): verso = description, recto = image.
+  Description upright, justified + hyphenated, vertically centred; name «…» bold red 12.5 pt,
+  right-aligned (toward the gutter).
+- **Diptych** (back matter — clouds + monks): both pages images, **equal box, mirror-symmetric**,
+  no text; sized by equal height so top and bottom edges align.
