@@ -26,8 +26,9 @@
   show regex(" (?:[вузіаійоВУЗІАЙО]|та|до|на|по|за|із|зі|що|як|бо|чи|не|Та|До|На|По|За|Із|Зі|Що|Як|Бо|Чи|Не) "): it => it.text.slice(0, it.text.len() - 1) + "\u{00A0}"
   // NBSP before an em-dash (so it never starts a line).
   show regex(" —"): it => "\u{00A0}—"
-  // keep the author's name together (no break inside «Камо но Тьомей/Тьомея»).
-  show regex("Камо но Тьоме[йя]"): it => it.text.replace(" ", "\u{00A0}")
+  // keep the author's name together: NBSP between words AND no hyphenation inside it
+  // (otherwise «Камо» can break as «Ка-мо» at a line end).
+  show regex("Камо но Тьоме[йя]"): it => text(hyphenate: false, it.text.replace(" ", "\u{00A0}"))
 
   doc
 }
