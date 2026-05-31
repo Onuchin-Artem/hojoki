@@ -6,7 +6,7 @@
 // Smaller than body, centered (STYLE.md).
 #let credit(body) = {
   set text(font: sans, size: 7.5pt, style: "italic", fill: grey)
-  align(center, body)
+  align(right, body)
 }
 
 // Prose: justified with hyphenation + optimized line-breaking. Typst leaves the last
@@ -24,6 +24,7 @@
 // The <live> marker (inside the block) tags the strophe's page as content, so
 // the running header/folio appears there but not on parity-filler blanks.
 #let verse(body) = {
+  set text(tracking: 0.002em)
   show par: it => block(breakable: false)[#metadata(none)<live>#it]
   body
 }

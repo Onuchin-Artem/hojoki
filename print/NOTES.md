@@ -117,7 +117,8 @@ See memory `manual-linebreak-justify` for the `\` vs `linebreak(justify:true)` r
 2. **Back matter next**, then the body (user's order: front → back → body). Back matter =
    diptych, endnotes (each on own page), «Зміст» ToC, ensō. Apply the same line-break rules.
 3. **Body closing signature** — reuse the p7 signature style (6.5 pt, right-aligned to poem edge).
-4. **Closing signature** currently lands on its own recto instead of the foot of the «тиша» verso.
+4. **Closing signature** — DONE: «Написано монахом Ренʼіном…» on its own page, `credit()` now
+   right-aligned, pushed to the page foot via `#pagebreak()` + `#v(1fr)` (in build_body.py).
 5. **Blank pages show a folio** — suppress folio/header on auto-inserted blanks.
 6. **Body chapter pass (IN PROGRESS)** — going chapter by chapter with the user, placing page
    breaks and line breaks by meaning/rhythm. Markers added to `source/hojoki.md`, consumed by
@@ -132,10 +133,16 @@ See memory `manual-linebreak-justify` for the `\` vs `linebreak(justify:true)` r
    Done: **Пролог** (breaks after «Вони — як люди…» and «що живуть у них»), **Пожежа**
    (tercet+empty-paragraph open, several line splits, «Більшість»+«Стільки» same page,
    «Будь-що» centred last page).
-7. **Last-page vertical alignment (DEFER — holistic pass).** Last pages of chapters need special
-   vertical alignment (centre? golden ratio?). Decide **in spread view, once all chapters are
-   rendered together** — don't finalize per-chapter. «Пожежа» last page is provisionally centred
-   via `===`; revisit uniformly across all chapters at the end.
+7. **Last-page vertical alignment.**
+   - **Verso-ends-chapter (RULE, apply now):** if a chapter's last page is a **verso (left)**,
+     drop its text so the first line's cap-top matches the **facing recto chapter title**. The
+     title sits at content-top +6 mm; cap-tops align at ~5.5 mm, but the user wants the verso
+     **0.5 em lower** than the title → **`~7.4mm`**. Insert `---` then `~7.4mm` before the
+     strophe that opens that verso page.
+     Done: «Голод» (verso folio 32) ↔ «Землетрус» (recto folio 33).
+   - **Recto-ends-chapter (DEFER — holistic pass):** centre? golden ratio? Decide **in spread
+     view once all chapters are rendered together**. «Пожежа» last page is provisionally centred
+     via `===`; revisit uniformly at the end.
 8. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
 8. **Bleed / print-prep — confirm specs with the print-on-demand company first.** Trim is
    B6 125 × 176 mm. Reading margins are fine for POD (gutter 19 mm, outer/top/bottom ample).

@@ -24,7 +24,7 @@ AMITABHA = (
          "розум до нього і повторювати імʼя Будди, можна переродитися в Чистій Землі Блаженства — "
          "місці без страждання, найкраще пристосованому для практики. Амітабга повʼязаний із "
          "західним напрямком, тому автор під час практики повертається обличчям туди."),
-        "Будда Амітабга важливий і для сучасних буддистів — вісім століть по тому.",
+        "Будда Амітабга важливий і для сучасних буддистів —#linebreak(justify: true)вісім століть по тому.",
     ],
 )
 
@@ -91,7 +91,8 @@ def emit_chapter(title, stanzas, signature):
     out.append("]")
     if signature:
         out.append("")
-        out.append("#v(1.2em)")  # signature just below «тиша», same page
+        out.append("#pagebreak()")
+        out.append("#v(1fr)")  # push the signature to the foot of its own page (right-aligned)
         out.append("#credit[")
         out.append(" \\\n".join(signature))
         out.append("]")

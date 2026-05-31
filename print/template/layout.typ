@@ -51,7 +51,7 @@
       if prior.last().value == "Зміст" { return }         // contents page — no folio
       // print a folio only on pages that carry content (skip parity-filler blanks)
       if not (_has(<live>, pg) or prior.last().location().page() == pg) { return }
-      set text(font: sans, size: 8.5pt, fill: grey)
+      set text(font: serif, size: 10pt, fill: grey)
       align(center)[#(str(counter(page).get().first()) + ".")]  // logical folio (restarts at 1)
     },
   )

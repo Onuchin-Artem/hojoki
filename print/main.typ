@@ -178,7 +178,8 @@
 
 // ── Main body ──────────────────────────────────────────────────────────────
 // Full canon margins, 11 pt. Folio restarts at 1 on «Пролог» (in chapter()).
-#set page(margin: (inside: 19mm, outside: 26mm, top: 32mm, bottom: 40mm))
+// Outer relaxed (26 → 25 mm) for slightly more verse line width.
+#set page(margin: (inside: 19mm, outside: 25mm, top: 32mm, bottom: 40mm))
 #set text(size: 11pt)
 
 #include "body.typ"
