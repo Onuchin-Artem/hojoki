@@ -65,7 +65,7 @@
 
 // ── Endnotes ────────────────────────────────────────────────────────────────
 // In-body reference: small red superscript number.
-#let endnote-ref(n) = super(text(fill: red, weight: "medium")[#str(n)])
+#let endnote-ref(n) = super(text(fill: grey, weight: "medium")[#str(n)])
 
 // The quoted lemma at the head of an endnote — a verse excerpt from the poem.
 // Grey italic, ragged (line breaks preserved by the source).

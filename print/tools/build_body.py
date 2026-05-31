@@ -69,7 +69,10 @@ def emit_chapter(title, stanzas, signature):
     out.append("#verse[")
     blocks = []
     for st in stanzas:
-        blocks.append(" \\\n".join(st))
+        if st == "PAGEBREAK":            # `---` in the source = a hand-placed page break
+            blocks.append("#pagebreak()")
+        else:
+            blocks.append(" \\\n".join(st))
     out.append("\n\n".join(blocks))
     out.append("]")
     if signature:
@@ -107,6 +110,10 @@ for raw in SRC[start:]:
     s = line.strip()
     if s == "":
         close_stanza()
+        continue
+    if s == "---":                      # hand-placed page break between stanzas
+        close_stanza()
+        stanzas.append("PAGEBREAK")
         continue
     if s.startswith("Написано монахом"):
         in_sig = True
