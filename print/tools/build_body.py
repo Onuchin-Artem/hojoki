@@ -71,8 +71,8 @@ def emit_chapter(title, stanzas, signature):
     for st in stanzas:
         if st == "PAGEBREAK":            # `---` = hand-placed page break
             blocks.append("#pagebreak()")
-        elif st == "GAP":                # `~`  = empty paragraph (extra vertical gap)
-            blocks.append("#v(2em)")
+        elif isinstance(st, str) and st.startswith("GAP:"):   # `~` (2em) or `~16mm` = vertical gap
+            blocks.append("#v(%s)" % st.split(":", 1)[1])
         elif st == "CENTER":             # `===` = page break + vertically centre to chapter end
             blocks.append("#pagebreak()\n#v(1fr)")
             centered = True
@@ -129,9 +129,10 @@ for raw in SRC[start:]:
         close_stanza()
         stanzas.append("PAGEBREAK")
         continue
-    if s == "~":                        # empty paragraph (extra vertical gap)
+    mgap = re.fullmatch(r"~\s*([\d.]+(?:em|mm|pt|cm))?", s)   # `~` (2em) or `~16mm`
+    if mgap:
         close_stanza()
-        stanzas.append("GAP")
+        stanzas.append("GAP:" + (mgap.group(1) or "2em"))
         continue
     if s == "===":                      # page break + vertically centre to chapter end
         close_stanza()
