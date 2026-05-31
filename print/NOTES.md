@@ -172,6 +172,15 @@ make -C print cmyk    bleed→CMYK    -> build/hojoki-print-cmyk.pdf (UPLOAD THI
 make -C print proof   bleed+marks   -> build/hojoki-proof.pdf      (eyeball only)
 ```
 
-**Still TODO:** the **cover case-wrap** PDF — single spread (back·spine·front), **0.8″ bleed**,
-**spine width from Mixam's calculator** (depends on 120 pp + paper, don't guess), **+0.2″ hinge**
-each side of spine, 300 dpi CMYK. And a physical colour proof.
+**Cover — `print/cover.typ`** (front=`assets/cover/front-cover.jpg` finished art; back=
+`assets/cover/back-cover.jpg` empty cream+brush, text set in Typst). `make -C print cover`
+→ `build/cover.pdf`, **CMYK by default** (Typst RGB → Ghostscript). Two layouts:
+`--input mode=pages` (default) = 3 component pages **front · spine · back**, each
+165.64×216.64 mm (panel) / 54.86×216.64 mm (spine), 0.8″ bleed all sides;
+`--input mode=spread` = one 315.02×216.64 mm spread. Spine = **0.56″** (`--input spine=`),
+hinge 0.2″. A **solid** beige band (`#e9e6dd`, sampled from the cover brush) sits at
+38–96% height across all panels so it connects front↔spine↔back — must stay solid
+(a gradient gets rasterised low-res by the gs CMYK pass and Mixam flags it).
+
+**Still TODO:** confirm geometry against **Mixam's downloaded cover template** (board overhang
+may shift trim a few mm); spine width depends on 120 pp + paper. And a physical colour proof.
