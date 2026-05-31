@@ -119,8 +119,24 @@ See memory `manual-linebreak-justify` for the `\` vs `linebreak(justify:true)` r
 3. **Body closing signature** — reuse the p7 signature style (6.5 pt, right-aligned to poem edge).
 4. **Closing signature** currently lands on its own recto instead of the foot of the «тиша» verso.
 5. **Blank pages show a folio** — suppress folio/header on auto-inserted blanks.
-6. **Hand-placed verse page breaks** in the body — currently auto-flow.
-7. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
+6. **Body chapter pass (IN PROGRESS)** — going chapter by chapter with the user, placing page
+   breaks and line breaks by meaning/rhythm. Markers added to `source/hojoki.md`, consumed by
+   `build_body.py` (regenerate with it):
+   - `---` (own line, between stanzas) → `#pagebreak()`.
+   - `~`   (own line) → empty paragraph (extra vertical gap, `#v(2em)`).
+   - `===` (own line) → page break + vertically centre everything to the chapter's end (`#v(1fr)`
+     before and after) — used to centre a chapter's last page.
+   - Line splits/merges are done by editing the verse lines directly in `source/hojoki.md`
+     (Python substring edits — beware NBSP after short prepositions; exact `==` match fails).
+   - In-body reference numbers are **grey** now.
+   Done: **Пролог** (breaks after «Вони — як люди…» and «що живуть у них»), **Пожежа**
+   (tercet+empty-paragraph open, several line splits, «Більшість»+«Стільки» same page,
+   «Будь-що» centred last page).
+7. **Last-page vertical alignment (DEFER — holistic pass).** Last pages of chapters need special
+   vertical alignment (centre? golden ratio?). Decide **in spread view, once all chapters are
+   rendered together** — don't finalize per-chapter. «Пожежа» last page is provisionally centred
+   via `===`; revisit uniformly across all chapters at the end.
+8. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
 8. **Bleed / print-prep — confirm specs with the print-on-demand company first.** Trim is
    B6 125 × 176 mm. Reading margins are fine for POD (gutter 19 mm, outer/top/bottom ample).
    **But the full-page grey backgrounds** (photo pages, «Ретрітна хатинка» description, diptych)

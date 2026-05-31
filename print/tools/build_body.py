@@ -67,13 +67,21 @@ def emit_chapter(title, stanzas, signature):
     first_chapter[0] = False
     out.append('#chapter("%s"%s)' % (title.replace('"', '\\"'), restart))
     out.append("#verse[")
-    blocks = []
+    blocks, centered = [], False
     for st in stanzas:
-        if st == "PAGEBREAK":            # `---` in the source = a hand-placed page break
+        if st == "PAGEBREAK":            # `---` = hand-placed page break
             blocks.append("#pagebreak()")
+        elif st == "GAP":                # `~`  = empty paragraph (extra vertical gap)
+            blocks.append("#v(2em)")
+        elif st == "CENTER":             # `===` = page break + vertically centre to chapter end
+            blocks.append("#pagebreak()\n#v(1fr)")
+            centered = True
         else:
             blocks.append(" \\\n".join(st))
-    out.append("\n\n".join(blocks))
+    body_text = "\n\n".join(blocks)
+    if centered:
+        body_text += "\n\n#v(1fr)"       # close the centring band at the chapter's end
+    out.append(body_text)
     out.append("]")
     if signature:
         out.append("")
@@ -114,6 +122,14 @@ for raw in SRC[start:]:
     if s == "---":                      # hand-placed page break between stanzas
         close_stanza()
         stanzas.append("PAGEBREAK")
+        continue
+    if s == "~":                        # empty paragraph (extra vertical gap)
+        close_stanza()
+        stanzas.append("GAP")
+        continue
+    if s == "===":                      # page break + vertically centre to chapter end
+        close_stanza()
+        stanzas.append("CENTER")
         continue
     if s.startswith("Написано монахом"):
         in_sig = True
