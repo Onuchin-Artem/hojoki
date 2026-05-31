@@ -14,12 +14,17 @@
 #let prose(body) = {
   set par(justify: true, linebreaks: "optimized", leading: 0.72em, spacing: 1.2em)
   set text(hyphenate: true)
+  // never split a paragraph across pages; <live> tags every page it lands on as
+  // content (so continuation pages also get a folio + running header).
+  show par: it => block(breakable: false)[#metadata(none)<live>#it]
   body
 }
 
 // Verse: each strophe is an unbreakable block (never split across a page).
+// The <live> marker (inside the block) tags the strophe's page as content, so
+// the running header/folio appears there but not on parity-filler blanks.
 #let verse(body) = {
-  show par: it => block(it, breakable: false)
+  show par: it => block(breakable: false)[#metadata(none)<live>#it]
   body
 }
 
@@ -62,10 +67,26 @@
 // In-body reference: small red superscript number.
 #let endnote-ref(n) = super(text(fill: red, weight: "medium")[#str(n)])
 
-// One endnote (back matter): bold red number, then the note as justified prose.
-#let endnote(n, body) = {
+// The quoted lemma at the head of an endnote — a verse excerpt from the poem.
+// Grey italic, ragged (line breaks preserved by the source).
+#let fn-quote(body) = {
+  set text(style: "italic", fill: grey)
+  set par(leading: 0.9em, justify: false)
+  body
+}
+
+// One endnote (back matter): bold red number, the quoted lemma as a grey verse,
+// then the note as justified prose.
+#let endnote(n, lemma, body) = {
+  [#metadata(none)<live>]                          // tag the endnote's page as content
+  [#metadata(n)<note>]                             // note number, for the running header
+  set text(size: 9pt)                              // footnotes 1pt smaller so more fit one page
   text(font: sans, weight: "bold", size: 12pt, fill: red)[#(str(n) + ".")]
-  v(2mm)
+  v(1mm)
+  fn-quote(lemma)
+  v(0.8em)
+  // discourage hyphenation (fewer lone fragments) + short last lines, per front-matter rules
+  set text(costs: (hyphenation: 400%, runt: 2000%))
   prose(body)
 }
 
@@ -76,4 +97,11 @@
 #let fm-heading(title) = {
   align(center, text(font: sans, weight: "bold", size: 14pt, fill: red, title))
   v(3.5mm)
+}
+
+// Back-matter section heading — like a chapter title (left, bold red 18 pt) but
+// without the chapter's deep top/below drop; sits at the top of the text block.
+#let section-heading(title) = {
+  align(left, text(font: sans, weight: "bold", size: 18pt, fill: red, title))
+  v(8mm)
 }

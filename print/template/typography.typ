@@ -23,7 +23,7 @@
 
   // Ukrainian typography: short prepositions/conjunctions must not be left at a
   // line end — glue them to the next word with a non-breaking space.
-  show regex(" (?:[вузіаійоВУЗІАЙО]|та|до|на|по|за|із|зі|що|як|бо|чи|не|Та|До|На|По|За|Із|Зі|Що|Як|Бо|Чи|Не) "): it => it.text.slice(0, it.text.len() - 1) + "\u{00A0}"
+  show regex(" (?:[вузіаійоВУЗІАЙО]|та|до|на|по|за|із|зі|що|як|бо|чи|не|про|при|без|від|над|під|для|або|але|та|Та|До|На|По|За|Із|Зі|Що|Як|Бо|Чи|Не|Про|При|Без|Від|Над|Під|Для|Або|Але) "): it => it.text.slice(0, it.text.len() - 1) + "\u{00A0}"
   // NBSP before an em-dash (so it never starts a line).
   show regex(" —"): it => "\u{00A0}—"
   // keep the author's name together: NBSP between words AND no hyphenation inside it

@@ -185,19 +185,27 @@
 
 // ── Back matter ──────────────────────────────────────────────────────────────
 // Same rules as front matter: 10 pt, tight margins, centered titles.
-#set page(margin: (inside: 19mm, outside: 18mm, top: 14mm, bottom: 25mm))
+// Identical top geometry to the body so the running header sits at exactly the
+// chapter height (32 − 22 = 10 mm from the page top) and text starts on the same
+// line as the verses (32 mm). Footnote-fit space is recovered from the bottom.
+// Header 10 mm from the top and folio 20 mm from the bottom — both at the chapter
+// levels (folio level = bottom − footer-descent = 24 − 4). The bottom margin stays
+// modest so footnotes keep their text area; text starts on the verse line (32 mm).
+#set page(margin: (inside: 19mm, outside: 18mm, top: 32mm, bottom: 24mm),
+          header-ascent: 22mm, footer-descent: 4mm)
 #set text(size: 10pt)
 
-// Blank recto (breathing space after «тиша») → clouds (V) + monks (R) diptych
-#pagebreak(to: "odd")
+// Clouds (verso, left) + monks (recto, right) — one facing spread
+#pagebreak(to: "even")
 #diptych("/assets/images/processed/Clouds.jpeg", "/assets/images/processed/Monks.jpeg")
 
-// Endnotes — begin on a recto; each note on its own page
+// Endnotes — begin on a recto; each note on its own page; running header «Примітки»
 #pagebreak(to: "odd")
 #include "endnotes.typ"
 
 // Table of contents
 #pagebreak(to: "odd")
+#metadata("Зміст")<chap>   // reset the running header (suppressed on this opening page)
 #fm-heading("Зміст")
 #context {
   let rows = ()
@@ -205,10 +213,13 @@
     rows.push(e.title)
     rows.push(text(fill: grey)[#e.page])
   }
-  grid(columns: (1fr, auto), column-gutter: 8pt, row-gutter: 0.9em, ..rows)
+  grid(columns: (1fr, auto), column-gutter: 8pt, row-gutter: 1em, ..rows)
 }
 
-// ensō calligraphy — final verso
-#pagebreak()
+// ensō calligraphy — final verso; circle centred on the upper golden-ratio line
+// (0.382 of page height from the top), i.e. a bit above the geometric middle.
+#pagebreak(to: "even")
 #page(header: none, footer: none,
-  align(center + horizon, image("/assets/images/processed/ensho.jpg", height: 70mm)))
+  // circle centre (≈62.6mm below the image top) lands on the golden line (0.382·h)
+  place(top + center, dy: 176mm * 0.382 - 62.6mm,
+        image("/assets/images/processed/ensho.jpg", height: 70mm)))
