@@ -34,7 +34,9 @@
 // "verso" (toward the right/gutter). Uniform box 85×113 mm, fit cover.
 #let photo-page(img, side: "recto") = {
   let al  = if side == "verso" { right } else { left }
-  let ins = if side == "verso" { (right: 14mm) } else { (left: 14mm) }
+  // +bleed on the gutter inset keeps the photo trim-relative; horizon stays centred
+  // on trim (bleed is symmetric top/bottom). The page fill extends into the bleed.
+  let ins = if side == "verso" { (right: 14mm + bleed) } else { (left: 14mm + bleed) }
   page(fill: photo-bg, margin: 0pt, header: none, footer: none,
     block(width: 100%, height: 100%, inset: ins,
       align(al + horizon, image(img, width: 85mm, height: 113mm, fit: "cover"))))
@@ -42,7 +44,7 @@
 
 // Description page (verso): bold red right-aligned name + justified body, centered.
 #let photo-desc(name, body) = page(fill: photo-bg, margin: 0pt, header: none, footer: none,
-  block(width: 100%, height: 100%, inset: (left: 26mm, right: 14mm, y: 24mm), {
+  block(width: 100%, height: 100%, inset: (left: 26mm + bleed, right: 14mm + bleed, y: 24mm + bleed), {
     set text(font: sans, size: 10pt, fill: ink, hyphenate: true)
     set par(leading: 0.95em, spacing: 1.3em, justify: true, linebreaks: "optimized")
     v(1fr)

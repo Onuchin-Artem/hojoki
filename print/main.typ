@@ -10,7 +10,7 @@
 // ── Front matter ───────────────────────────────────────────────────────────
 // No running header, no folio anywhere in front matter (running starts at the
 // first chapter). Front matter uses tighter margins (~30% smaller than the body).
-#set page(margin: (inside: 19mm, outside: 18mm, top: 14mm, bottom: 25mm))
+#set page(margin: (inside: 19mm + bleed, outside: 18mm + bleed, top: 14mm + bleed, bottom: 25mm + bleed))
 #set text(size: 10pt)  // front matter 1pt smaller than body so each section fits one page
 
 // p1 R — half-title (title only, sans, one line, top-aligned)
@@ -156,7 +156,7 @@
 // p10 V + p11 R — retreat-house photo spread (grey background, no header/folio)
 #pagebreak()
 #page(fill: photo-bg, margin: 0pt, header: none, footer: none)[
-  #block(width: 100%, height: 100%, inset: (left: 26mm, right: 14mm, y: 24mm))[
+  #block(width: 100%, height: 100%, inset: (left: 26mm + bleed, right: 14mm + bleed, y: 24mm + bleed))[
     #set text(font: sans, size: 10.5pt, fill: ink, hyphenate: true, costs: (hyphenation: 300%))
     #set par(leading: 0.95em, spacing: 1.3em, justify: true)
     #v(1fr)
@@ -171,7 +171,7 @@
   ]
 ]
 #page(fill: photo-bg, margin: 0pt, header: none, footer: none)[
-  #block(width: 100%, height: 100%, inset: (left: 14mm))[
+  #block(width: 100%, height: 100%, inset: (left: 14mm + bleed))[
     #align(left + horizon, image("/assets/images/processed/retreat-hut.jpeg", width: 85mm, height: 113mm, fit: "cover"))
   ]
 ]
@@ -179,7 +179,7 @@
 // ── Main body ──────────────────────────────────────────────────────────────
 // Full canon margins, 11 pt. Folio restarts at 1 on «Пролог» (in chapter()).
 // Outer relaxed (26 → 25 mm) for slightly more verse line width.
-#set page(margin: (inside: 19mm, outside: 25mm, top: 32mm, bottom: 40mm))
+#set page(margin: (inside: 19mm + bleed, outside: 25mm + bleed, top: 32mm + bleed, bottom: 40mm + bleed))
 #set text(size: 11pt)
 
 #include "body.typ"
@@ -192,7 +192,7 @@
 // Header 10 mm from the top and folio 20 mm from the bottom — both at the chapter
 // levels (folio level = bottom − footer-descent = 24 − 4). The bottom margin stays
 // modest so footnotes keep their text area; text starts on the verse line (32 mm).
-#set page(margin: (inside: 19mm, outside: 18mm, top: 32mm, bottom: 24mm),
+#set page(margin: (inside: 19mm + bleed, outside: 18mm + bleed, top: 32mm + bleed, bottom: 24mm + bleed),
           header-ascent: 22mm, footer-descent: 4mm)
 #set text(size: 10pt)
 
@@ -204,10 +204,14 @@
 #pagebreak(to: "odd")
 #include "endnotes.typ"
 
+// Two blank leaves (pad the total to a multiple of 4 for hardcover signatures).
+#pagebreak()
+#pagebreak()
+
 // Table of contents
 #pagebreak(to: "odd")
 #metadata("Зміст")<chap>   // reset the running header (suppressed on this opening page)
-#fm-heading("Зміст")
+#section-heading("Зміст")
 #context {
   let rows = ()
   for e in _toc.get() {
@@ -221,6 +225,7 @@
 // (0.382 of page height from the top), i.e. a bit above the geometric middle.
 #pagebreak(to: "even")
 #page(header: none, footer: none,
-  // circle centre (≈62.6mm below the image top) lands on the golden line (0.382·h)
-  place(top + center, dy: 176mm * 0.382 - 62.6mm,
+  // circle centre (≈62.6mm below the image top) lands on the golden line (0.382·h);
+  // +bleed keeps it measured from the trim top, not the enlarged page-box top.
+  place(top + center, dy: bleed + 176mm * 0.382 - 62.6mm,
         image("/assets/images/processed/ensho.jpg", height: 70mm)))

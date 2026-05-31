@@ -1,5 +1,15 @@
 // Typographic tokens for the print PDF — see STYLE.md
 
+// Bleed (0 by default = screen PDF). Set for print with `--input bleed=3.175mm`
+// (Mixam interior bleed = 0.125"). Every page grows by 2·bleed and each margin
+// by bleed, so all content stays trim-relative while full-bleed fills extend out.
+#let bleed = eval(sys.inputs.at("bleed", default: "0mm"))
+
+// Trim/crop marks for proofing (off by default). Enable with `--input marks=true`.
+// NOTE: do NOT enable for the Mixam upload — they trim to page size; marks are
+// for your own eyeballing of trim vs bleed only.
+#let marks = sys.inputs.at("marks", default: "false") == "true"
+
 // Colors
 #let ink       = rgb("#252120")  // primary text
 #let red       = rgb("#e46340")  // chapter + running header
