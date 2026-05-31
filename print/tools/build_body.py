@@ -67,7 +67,7 @@ def emit_chapter(title, stanzas, signature):
     first_chapter[0] = False
     out.append('#chapter("%s"%s)' % (title.replace('"', '\\"'), restart))
     out.append("#verse[")
-    blocks, centered = [], False
+    blocks, centered, indent = [], False, False
     for st in stanzas:
         if st == "PAGEBREAK":            # `---` = hand-placed page break
             blocks.append("#pagebreak()")
@@ -76,8 +76,14 @@ def emit_chapter(title, stanzas, signature):
         elif st == "CENTER":             # `===` = page break + vertically centre to chapter end
             blocks.append("#pagebreak()\n#v(1fr)")
             centered = True
+        elif st == "INDENT":             # `>`  = indent the next stanza (left)
+            indent = True
         else:
-            blocks.append(" \\\n".join(st))
+            block = " \\\n".join(st)
+            if indent:
+                block = "#pad(left: 2em)[" + block + "]"
+                indent = False
+            blocks.append(block)
     body_text = "\n\n".join(blocks)
     if centered:
         body_text += "\n\n#v(1fr)"       # close the centring band at the chapter's end
@@ -130,6 +136,10 @@ for raw in SRC[start:]:
     if s == "===":                      # page break + vertically centre to chapter end
         close_stanza()
         stanzas.append("CENTER")
+        continue
+    if s == ">":                        # indent the next stanza
+        close_stanza()
+        stanzas.append("INDENT")
         continue
     if s.startswith("Написано монахом"):
         in_sig = True
