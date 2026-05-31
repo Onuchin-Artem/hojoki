@@ -144,12 +144,43 @@ See memory `manual-linebreak-justify` for the `\` vs `linebreak(justify:true)` r
      view once all chapters are rendered together**. «Пожежа» last page is provisionally centred
      via `===`; revisit uniformly at the end.
 8. Swap in **static** Cormorant Garamond weights; set the title-page weight deliberately.
-8. **Bleed / print-prep — confirm specs with the print-on-demand company first.** Trim is
-   B6 125 × 176 mm. Reading margins are fine for POD (gutter 19 mm, outer/top/bottom ample).
-   **But the full-page grey backgrounds** (photo pages, «Ретрітна хатинка» description, diptych)
-   run to the trim edge with **no bleed** (`page(fill: photo-bg, margin: 0pt)`) — risks a white
-   sliver after trimming. Before final export: ask the POD vendor for their **bleed (usually
-   3 mm), total document size, and crop-mark** requirements, then add bleed to `layout.typ` +
-   the photo pages (enlarge page to ~131 × 182 mm, extend the grey fills into the bleed). White
-   text pages don't need it, but the whole interior PDF must be exported at the bleed size.
-   **This is a decision to align with the printer — do not hardcode a bleed until confirmed.**
+
+## Print preparation — Mixam hardcover (B6) — DONE for interior
+
+Vendor: **Mixam hardcover** (https://mixam.com/hardcoverbooks). Trim **B6 125 × 176 mm**.
+Reviewed against Mixam's checklist (mixam.com/support/checklist).
+
+- **Bleed** is parameterized via a Typst input: `bleed` (default `0mm`) in `typography.typ`,
+  read with `--input bleed=3.175mm` (Mixam interior = 0.125"). Every page grows by 2·bleed and
+  each margin by bleed (in `layout.typ` `book()` + the three `#set page(margin:)` in `main.typ`),
+  so all content stays **trim-relative** while the full-bleed greys (photo pages, «Ретрітна
+  хатинка» desc, diptych — `components.typ`; ensō `dy += bleed`) extend into the bleed.
+- **Trim/crop marks**: `marks` input (default off), `--input marks=true` → `_crop-marks`
+  overlay in `layout.typ` draws L-marks at the trim corners. **Proof only — never upload.**
+- **Page count** padded to **120** (÷4 for signatures) via two `#pagebreak()` blank leaves
+  between the endnotes and «Зміст» in `main.typ`.
+- **CMYK**: Typst exports RGB; `make cmyk` runs **Ghostscript** (installed via brew) to convert
+  the bleed PDF → DeviceCMYK. Our inks (`#252120`, `#e46340`, greys) are all CMYK mixes anyway,
+  so no pure-K text to preserve. **Still colour-proof the reds/greys** before a full run.
+- **Images**: all 872–1089 dpi at placed size (≫300), sRGB — convert cleanly.
+
+**Build targets (`print/Makefile`):**
+```
+make -C print all     reading copy  -> build/hojoki.pdf            (trim, RGB)
+make -C print print   bleed         -> build/hojoki-print.pdf      (RGB)
+make -C print cmyk    bleed→CMYK    -> build/hojoki-print-cmyk.pdf (UPLOAD THIS)
+make -C print proof   bleed+marks   -> build/hojoki-proof.pdf      (eyeball only)
+```
+
+**Cover — `print/cover.typ`** (front=`assets/cover/front-cover.jpg` finished art; back=
+`assets/cover/back-cover.jpg` empty cream+brush, text set in Typst). `make -C print cover`
+→ `build/cover.pdf`, **CMYK by default** (Typst RGB → Ghostscript). Two layouts:
+`--input mode=pages` (default) = 3 component pages **front · spine · back**, each
+165.64×216.64 mm (panel) / 54.86×216.64 mm (spine), 0.8″ bleed all sides;
+`--input mode=spread` = one 315.02×216.64 mm spread. Spine = **0.56″** (`--input spine=`),
+hinge 0.2″. A **solid** beige band (`#e9e6dd`, sampled from the cover brush) sits at
+38–96% height across all panels so it connects front↔spine↔back — must stay solid
+(a gradient gets rasterised low-res by the gs CMYK pass and Mixam flags it).
+
+**Still TODO:** confirm geometry against **Mixam's downloaded cover template** (board overhang
+may shift trim a few mm); spine width depends on 120 pp + paper. And a physical colour proof.

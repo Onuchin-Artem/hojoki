@@ -17,11 +17,27 @@
 #let live-mark = [#metadata(none)<live>]
 #let _has(label, pg) = query(label).filter(m => m.location().page() == pg).len() > 0
 
+// Trim/crop marks drawn into the bleed at the four trim corners (proof only).
+#let _crop-marks = if marks {
+  layout(sz => {
+    let w = sz.width
+    let h = sz.height
+    let b = bleed
+    let s = 0.3pt + black
+    let mk(x, y, len, ang) = place(top + left, dx: x, dy: y, line(length: len, angle: ang, stroke: s))
+    mk(0mm, b, b, 0deg);       mk(b, 0mm, b, 90deg)         // top-left
+    mk(w - b, b, b, 0deg);     mk(w - b, 0mm, b, 90deg)     // top-right
+    mk(0mm, h - b, b, 0deg);   mk(b, h - b, b, 90deg)       // bottom-left
+    mk(w - b, h - b, b, 0deg); mk(w - b, h - b, b, 90deg)   // bottom-right
+  })
+} else { none }
+
 #let book(body) = {
   set page(
-    width: 125mm,
-    height: 176mm,
-    margin: (inside: 19mm, outside: 26mm, top: 32mm, bottom: 40mm),
+    foreground: _crop-marks,
+    width: 125mm + 2 * bleed,
+    height: 176mm + 2 * bleed,
+    margin: (inside: 19mm + bleed, outside: 26mm + bleed, top: 32mm + bleed, bottom: 40mm + bleed),
     header-ascent: 22mm,
     footer-descent: 20mm,
     header: context {
