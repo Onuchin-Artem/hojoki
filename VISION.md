@@ -31,8 +31,7 @@ Source Markdown is converted by Pandoc using custom HTML templates and CSS. The 
 The PDF is composed in Typst — a modern typesetting system that compiles to PDF directly. Typst source files are plain text stored in Git. The print layout handles book-specific requirements:
 - All chapters begin on a recto (right-hand, odd-numbered) page
 - Chapter opening pages have no running header
-- Recto pages carry the chapter title in the running header
-- Verso pages carry the book title in the running header
+- Recto pages carry the chapter title in the running header; verso pages carry no running header
 - Poetry stanzas have precise vertical spacing
 - Endnotes rather than footnotes
 - Custom fonts and ornamental elements

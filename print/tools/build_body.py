@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""Convert source/hojoki.md body (Пролог … Досвітня тиша) into print/body.typ.
+
+- `# Title` -> #chapter("Title") + #verse[ ... ]
+- stanza lines joined with trailing ` \`; blank line = stanza break
+- NBSP inserted before em-dashes ( ' —' -> '\\u{00A0}—' )
+- [^marker] -> #endnote-ref(N) (N by first appearance, shared with endnotes)
+- Amitābha photo-spread inserted before «Моя маленька хатинка»
+- trailing "Написано монахом …" in the last chapter -> credit() signature
+Run from the project root: python3 print/tools/build_body.py
+"""
+import re, pathlib
+
+ROOT = pathlib.Path(__file__).resolve().parents[2]
+SRC = (ROOT / "source/hojoki.md").read_text(encoding="utf-8").splitlines()
+
+AMITABHA = (
+    "«Амітабга»",
+    "/assets/images/processed/Amitabha.jpeg",
+    [
+        "На фото зображена статуя Будди Амітабги в ретрітному центрі Garchen Buddhist Institute.",
+        ("Камо но Тьомей був практиком буддизму Чистих Земель — школи, що зосереджується на "
+         "зреченні і відданості Будді Амітабзі. Її послідовники вірять: якщо постійно повертати "
+         "розум до нього і повторювати імʼя Будди, можна переродитися в Чистій Землі Блаженства — "
+         "місці без страждання, найкраще пристосованому для практики. Амітабга повʼязаний із "
+         "західним напрямком, тому автор під час практики повертається обличчям туди."),
+        "Будда Амітабга важливий і для сучасних буддистів —#linebreak(justify: true)вісім століть по тому.",
+    ],
+)
+
+def nbsp(s):
+    return s.replace(" —", "\\u{00A0}—")  # emit literal \u{00A0} (Typst escape) in the .typ output
+
+# marker -> number, by first appearance across the whole body
+order = []
+def ref_num(m):
+    key = m.group(1)
+    if key not in order:
+        order.append(key)
+    return "#endnote-ref(%d)" % (order.index(key) + 1)
+
+def cook(line):
+    line = re.sub(r"\[\^([^\]]+)\]", ref_num, line)
+    return nbsp(line.strip())
+
+# find body start: first heading after the {.book-title} line
+start = 0
+for i, l in enumerate(SRC):
+    if l.lstrip().startswith("#") and "book-title" in l:
+        start = i + 1
+        break
+
+out = []
+
+def emit_amitabha():
+    name, img, paras = AMITABHA
+    out.append('#photo-spread("%s", "%s")[' % (name, img))
+    out.append("\n\n".join("  " + nbsp(p) for p in paras))
+    out.append("]")
+    out.append("")
+
+first_chapter = [True]
+def emit_chapter(title, stanzas, signature):
+    if title == "Моя маленька хатинка":
+        emit_amitabha()
+    restart = ", restart: true" if first_chapter[0] else ""
+    first_chapter[0] = False
+    out.append('#chapter("%s"%s)' % (title.replace('"', '\\"'), restart))
+    out.append("#verse[")
+    blocks, centered, indent = [], False, None
+    for st in stanzas:
+        if st == "PAGEBREAK":            # `---` = hand-placed page break
+            blocks.append("#pagebreak()")
+        elif isinstance(st, str) and st.startswith("GAP:"):   # `~` (2em) or `~16mm` = vertical gap
+            blocks.append("#v(%s)" % st.split(":", 1)[1])
+        elif st == "CENTER":             # `===` = page break + vertically centre to chapter end
+            blocks.append("#pagebreak()\n#v(1fr)")
+            centered = True
+        elif isinstance(st, str) and st.startswith("INDENT:"):  # `>` / `>Nem` = indent next stanza
+            indent = st.split(":", 1)[1]
+        else:
+            block = " \\\n".join(st)
+            if indent:
+                block = "#pad(left: %s)[%s]" % (indent, block)
+                indent = None
+            blocks.append(block)
+    body_text = "\n\n".join(blocks)
+    if centered:
+        body_text += "\n\n#v(1fr)"       # close the centring band at the chapter's end
+    out.append(body_text)
+    out.append("]")
+    if signature:
+        out.append("")
+        out.append("#pagebreak()")
+        out.append("#v(1fr)")  # push the signature to the foot of its own page (right-aligned)
+        out.append("#credit[")
+        out.append(" \\\n".join(signature))
+        out.append("]")
+    out.append("")
+
+title = None
+stanzas = []        # list of stanzas; each stanza is a list of cooked lines
+cur = []            # current stanza
+signature = []      # trailing "Написано монахом …" block
+in_sig = False
+
+def close_stanza():
+    global cur
+    if cur:
+        stanzas.append(cur)
+        cur = []
+
+for raw in SRC[start:]:
+    line = raw.rstrip()
+    h = re.match(r"^#\s+(.*)$", line)
+    if h:
+        close_stanza()
+        if title is not None:
+            emit_chapter(title, stanzas, signature)
+        title = re.sub(r"\s*\{[^}]*\}", "", h.group(1)).strip()
+        stanzas, cur, signature, in_sig = [], [], [], False
+        continue
+    if title is None:
+        continue
+    s = line.strip()
+    if s == "":
+        close_stanza()
+        continue
+    if s == "---":                      # hand-placed page break between stanzas
+        close_stanza()
+        stanzas.append("PAGEBREAK")
+        continue
+    mgap = re.fullmatch(r"~\s*([\d.]+(?:em|mm|pt|cm))?", s)   # `~` (2em) or `~16mm`
+    if mgap:
+        close_stanza()
+        stanzas.append("GAP:" + (mgap.group(1) or "2em"))
+        continue
+    if s == "===":                      # page break + vertically centre to chapter end
+        close_stanza()
+        stanzas.append("CENTER")
+        continue
+    mind = re.fullmatch(r">\s*([\d.]+em)?", s)   # `>` (default 2em) or `>1em` / `> 1.5em`
+    if mind:
+        close_stanza()
+        stanzas.append("INDENT:" + (mind.group(1) or "2em"))
+        continue
+    if s.startswith("Написано монахом"):
+        in_sig = True
+    if in_sig:
+        signature.append(cook(s))
+    else:
+        cur.append(cook(s))
+
+close_stanza()
+if title is not None:
+    emit_chapter(title, stanzas, signature)
+
+HEADER = (
+    "// GENERATED by print/tools/build_body.py — do not edit by hand.\n"
+    '#import "template/layout.typ": *\n'
+    '#import "template/typography.typ": *\n'
+    '#import "template/components.typ": *\n\n'
+)
+(ROOT / "print/body.typ").write_text(HEADER + "\n".join(out), encoding="utf-8")
+print("body.typ:", len(out), "lines; endnote order:", order)
