@@ -67,7 +67,7 @@ def emit_chapter(title, stanzas, signature):
     first_chapter[0] = False
     out.append('#chapter("%s"%s)' % (title.replace('"', '\\"'), restart))
     out.append("#verse[")
-    blocks, centered, indent = [], False, None
+    blocks, centered, indent, hang = [], False, None, None
     for st in stanzas:
         if st == "PAGEBREAK":            # `---` = hand-placed page break
             blocks.append("#pagebreak()")
@@ -76,13 +76,18 @@ def emit_chapter(title, stanzas, signature):
         elif st == "CENTER":             # `===` = page break + vertically centre to chapter end
             blocks.append("#pagebreak()\n#v(1fr)")
             centered = True
-        elif isinstance(st, str) and st.startswith("INDENT:"):  # `>` / `>Nem` = indent next stanza
+        elif isinstance(st, str) and st.startswith("HANG:"):   # `>>` / `>>Nem` = hanging indent (1st line flush, rest indented)
+            hang = st.split(":", 1)[1]
+        elif isinstance(st, str) and st.startswith("INDENT:"):  # `>` / `>Nem` = indent whole next stanza
             indent = st.split(":", 1)[1]
         else:
             block = " \\\n".join(st)
             if indent:
                 block = "#pad(left: %s)[%s]" % (indent, block)
                 indent = None
+            elif hang:
+                block = "#par(hanging-indent: %s)[%s]" % (hang, block)
+                hang = None
             blocks.append(block)
     body_text = "\n\n".join(blocks)
     if centered:
@@ -138,6 +143,11 @@ for raw in SRC[start:]:
     if s == "===":                      # page break + vertically centre to chapter end
         close_stanza()
         stanzas.append("CENTER")
+        continue
+    mhang = re.fullmatch(r">>\s*([\d.]+em)?", s)  # `>>` / `>>Nem` = hanging indent (1st line flush)
+    if mhang:
+        close_stanza()
+        stanzas.append("HANG:" + (mhang.group(1) or "2em"))
         continue
     mind = re.fullmatch(r">\s*([\d.]+em)?", s)   # `>` (default 2em) or `>1em` / `> 1.5em`
     if mind:
