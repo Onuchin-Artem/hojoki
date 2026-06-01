@@ -68,6 +68,8 @@
   Creative Commons Attribution-NonCommercial 4.0 International \
   (CC BY-NC 4.0)
 
+  ISBN 979-8-90514-356-4
+
   #v(2.5em)
   #align(center, text(size: 6pt)[© Артем Онучін, 2026])
   #v(2.3mm)  // align the license block's bottom with «Передмова»'s last line; © falls just below

@@ -28,8 +28,11 @@
   // fragment (runt), reduce hyphenation, avoid widows/orphans.
   set text(costs: (hyphenation: 100%, runt: 1000%, widow: 500%, orphan: 500%))
 
-  // Foreign (Latin-script) names → italic.
-  show regex("[A-Za-zÀ-ÿĀ-ſ]+(?:[ -][A-Za-zÀ-ÿĀ-ſ]+)*"): it => text(style: "italic", it)
+  // Foreign (Latin-script) names → italic; but leave all-caps acronyms (ISBN,
+  // CC BY-NC) upright — they read as codes, not foreign-language phrases.
+  show regex("[A-Za-zÀ-ÿĀ-ſ]+(?:[ -][A-Za-zÀ-ÿĀ-ſ]+)*"): it => {
+    if it.text == upper(it.text) { it } else { text(style: "italic", it) }
+  }
 
   // Ukrainian typography: short prepositions/conjunctions must not be left at a
   // line end — glue them to the next word with a non-breaking space.

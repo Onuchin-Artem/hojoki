@@ -35,9 +35,11 @@
 // Back-cover text (set over the empty background), sized to one trim panel.
 #let back-text = box(width: coverw, height: coverh, inset: (x: 19mm, top: 24mm, bottom: 13mm), {
   show regex(" —"): it => "\u{00A0}—"
+  // glue short prepositions/conjunctions to the next word (e.g. «з природою»)
+  show regex(" (?:[вузіаійоВУЗІАЙО]|та|до|на|по|за|із|зі|що|як|бо|чи|не|про|при|без|від|над|під|для|або|але|Та|До|На|По|За|Із|Зі|Що|Як|Бо|Чи|Не|Про|При|Без|Від|Над|Під|Для|Або|Але) "): it => it.text.slice(0, it.text.len() - 1) + "\u{00A0}"
   {
     set par(justify: true, linebreaks: "optimized", leading: 0.8em, spacing: 1.2em)
-    set text(size: 10.5pt, hyphenate: true, costs: (hyphenation: 100%, runt: 1000%))
+    set text(size: 10.5pt, hyphenate: false)   // blurb reads cleaner unhyphenated
     [#text(fill: red, weight: "bold")[Класичний твір японської літератури,] написаний 1212 року.
      Монах-самітник згадує страждання, лиха і втрати, які випали на його власне
      життя. Попри це він знаходить спокій у самотньому житті, опорі на себе,
