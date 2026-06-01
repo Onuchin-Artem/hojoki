@@ -182,5 +182,19 @@ hinge 0.2″. A **solid** beige band (`#e9e6dd`, sampled from the cover brush) s
 38–96% height across all panels so it connects front↔spine↔back — must stay solid
 (a gradient gets rasterised low-res by the gs CMYK pass and Mixam flags it).
 
+**Back-cover text** (set in `cover.typ`, NOT in `source/`; keep in sync by hand):
+- Blurb (bold red lead + justified, hyphenation OFF): «**Класичний твір японської
+  літератури,** написаний 1212 року. Монах-самітник згадує страждання, лиха і втрати, які
+  випали на його власне життя. Попри це він знаходить спокій у самотньому житті, опорі на
+  себе, єднанні з природою і зосередженні на духовній практиці.»
+- Verse (italic grey, ragged) — an **excerpt condensed from «Пожежа»** (`hojoki.md` L182–187 +
+  the chapter's closing strophe): «Доми шістнадцяти панів і безліч інших згоріли. / Це — третя
+  частина столиці. / Декілька тисяч чоловіків і жінок / загинули. / Безліч коней та інших
+  тварин / померли. // Будь-що ми робимо в нашому житті / не має жодного сенсу. / Проте
+  тратити скарб і багатство на те, / щоб збудувати будинки / в цій небезпечній столиці — / це
+  особлива дурниця.»  **⚠ duplicates body text** — if «Пожежа» changes, update this by hand.
+- Bottom: «© Артем Онучін, 2026» centred + CC BY-NC badge (`by-nc.png`) right.
+- Spine title: «Думки у ретрітній хатинці» (serif, light, bottom-to-top).
+
 **Still TODO:** confirm geometry against **Mixam's downloaded cover template** (board overhang
 may shift trim a few mm); spine width depends on 120 pp + paper. And a physical colour proof.
