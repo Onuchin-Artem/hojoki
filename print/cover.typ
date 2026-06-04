@@ -21,16 +21,20 @@
 
 #let cream  = rgb("#f8f5ec")   // cover background; fills wrap/bleed
 #let band   = rgb("#e9e6dd")   // beige band — sampled from the cover brush sweep
-#let band-top = 0.380          // band vertical extent (fraction of trim height)
-#let band-bot = 0.960
+#let band-top = 0.345          // band (with feathered top) sits a bit higher; solid part ~42%
+#let band-bot = eval(sys.inputs.at("bandbot", default: "1.020"))   // bottom fade finish (fraction of trim)
 
 #set text(font: sans, fill: ink, lang: "uk")
 
-// Beige band, full content-width, at the cover brush height (so components align).
-// Solid fill (not a gradient) so it stays vector — a gradient gets rasterised to a
-// low-res image by the Ghostscript CMYK pass (Mixam flags it).
-#let draw-band(pw) = place(top + left, dx: 0mm, dy: cbleed + band-top * coverh,
-  rect(width: pw, height: (band-bot - band-top) * coverh, stroke: none, fill: band))
+// Spine brush — a strip cropped from the cover art's brush sweep, so the spine
+// shows the SAME textured brush as the covers (a flat colour band looked pasted-on
+// and didn't match). Fills the spine region; connects front↔spine↔back.
+#let band-h = (band-bot - band-top) * coverh
+// straight brush band on the spine, level with the cover brush — a horizontal
+// slice of the cover's own brush (same image → matches texture & colour), with
+// straight edges that survive spine/hinge trimming.
+#let draw-band(x, w) = place(top + left, dx: x, dy: cbleed + band-top * coverh,
+  image("/assets/cover/spine-band.png", width: w, height: band-h, fit: "stretch"))
 
 // Back-cover text (set over the empty background), sized to one trim panel.
 #let back-text = box(width: coverw, height: coverh, inset: (x: 19mm, top: 24mm, bottom: 13mm), {
@@ -70,8 +74,9 @@
   })
 })
 
-#let spine-title = box(width: spine, height: coverh, align(center + horizon,
-  rotate(-90deg, reflow: true,
+// title starts near the top of the spine (~11% down, per the marked line)
+#let spine-title = box(width: spine, height: coverh, inset: (top: 19mm), align(center + top,
+  rotate(90deg, reflow: true,
     text(font: serif, weight: 300, size: 13pt)[Думки у ретрітній хатинці])))
 
 #if mode == "spread" {
@@ -81,9 +86,10 @@
   let spine-x = cbleed + coverw + hinge
   let front-x = cbleed + coverw + 2 * hinge + spine
   set page(width: spread-w, height: spread-h, margin: 0pt, fill: cream)
-  draw-band(spread-w)
   if back != "" { place(top + left, dx: cbleed, dy: cbleed, image(back, width: coverw, height: coverh)) }
   if front != "" { place(top + left, dx: front-x, dy: cbleed, image(front, width: coverw, height: coverh)) }
+  // straight brush band across the hinge+spine+hinge gap — connects the two covers
+  draw-band(cbleed + coverw, 2 * hinge + spine)
   place(top + left, dx: spine-x, dy: cbleed, spine-title)
   place(top + left, dx: cbleed, dy: cbleed, back-text)
 } else {
@@ -92,17 +98,15 @@
   let ph = coverh + 2 * cbleed
   // front
   page(width: pw, height: ph, margin: 0pt, fill: cream, {
-    draw-band(pw)
     if front != "" { place(top + left, dx: cbleed, dy: cbleed, image(front, width: coverw, height: coverh)) }
   })
-  // spine
+  // spine — straight brush band level with the covers, title on top
   page(width: spine + 2 * cbleed, height: ph, margin: 0pt, fill: cream, {
-    draw-band(spine + 2 * cbleed)
+    draw-band(0mm, spine + 2 * cbleed)
     place(top + left, dx: cbleed, dy: cbleed, spine-title)
   })
   // back
   page(width: pw, height: ph, margin: 0pt, fill: cream, {
-    draw-band(pw)
     if back != "" { place(top + left, dx: cbleed, dy: cbleed, image(back, width: coverw, height: coverh)) }
     place(top + left, dx: cbleed, dy: cbleed, back-text)
   })
