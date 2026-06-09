@@ -271,32 +271,43 @@ def merge_japanesewiki(md):
     return "\n".join(lines)
 
 def md_to_html(lines, first_is_lemma=False):
-    out, para, lst, first = [], [], [], True
+    out = []
+    start = 0
+    # The lemma is the leading *…* verse quote; it may span several lines AND
+    # several stanzas (blank lines). Extract the whole `*`…`*` span as one italic
+    # block so the markers always pair, keeping line breaks (<br>) and stanza gaps.
+    if first_is_lemma:
+        j = 0
+        while j < len(lines) and lines[j].strip() == "":
+            j += 1
+        if j < len(lines) and lines[j].lstrip().startswith("*"):
+            buf, k = [], j
+            while k < len(lines):
+                buf.append(lines[k].strip())
+                if lines[k].strip().endswith("*") and len("\n".join(buf).strip()) > 1:
+                    break
+                k += 1
+            start = k + 1
+            inner = re.sub(r"^\*+|\*+$", "", "\n".join(buf).strip())
+            stanzas = re.split(r"\n\s*\n", inner)
+            html_st = ["<br>".join(inline(x.strip()) for x in st.split("\n") if x.strip())
+                       for st in stanzas]
+            out.append('<p class="lemma"><em>' + "<br><br>".join(html_st) + "</em></p>")
+
+    para, lst = [], []
     def flush_para():
-        nonlocal para, first
-        if not para: return
-        is_lemma = first and first_is_lemma and para[0].lstrip().startswith("*")
-        if is_lemma:
-            # verse quote — keep its original line breaks (join with <br>)
-            txt = inline("\n".join(strip_breaks(x) for x in para)).replace("\n", "<br>\n")
-            out.append(f'<p class="lemma">{txt}</p>')
-        else:
-            out.append(f"<p>{inline(strip_breaks(' '.join(para)))}</p>")
-        para, first = [], False
+        if para:
+            out.append(f"<p>{inline(strip_breaks(' '.join(para)))}</p>"); para.clear()
     def flush_list():
-        nonlocal lst
         if lst:
-            items = "".join(f"<li>{inline(strip_breaks(x))}</li>" for x in lst)
-            out.append(f"<ul>{items}</ul>"); lst = []
-    for ln in lines:
+            out.append("<ul>" + "".join(f"<li>{inline(strip_breaks(x))}</li>" for x in lst) + "</ul>")
+            lst.clear()
+    for ln in lines[start:]:
         s = ln.strip()
-        if s == "":
+        if s == "" or s == "---":      # blank or print pagebreak — flush, emit nothing
             flush_para(); flush_list()
-        elif s == "---":
-            flush_para(); flush_list()   # page break in source — ignored on web (no pages)
         elif re.match(r"^-\s+", s):
-            flush_para()
-            lst.append(re.sub(r"^-\s+", "", s))
+            flush_para(); lst.append(re.sub(r"^-\s+", "", s))
         else:
             flush_list(); para.append(s)
     flush_para(); flush_list()

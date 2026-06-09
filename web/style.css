@@ -66,6 +66,8 @@ body {
 .chapter, .prose-section, .notes { padding-block: clamp(1.8rem, 5vh, 3.4rem); }
 .prose-section { padding-block: clamp(0.8rem, 2vh, 1.4rem); }   /* front matter sits tighter */
 .chapter { padding-block: clamp(2.2rem, 4.8vh, 3.8rem) clamp(1.1rem, 2.4vh, 1.9rem); }  /* top 2× the bottom */
+/* a chapter title right after an illustration gets the full between-chapter gap */
+.illus + .chapter { padding-top: clamp(3.3rem, 7.2vh, 5.7rem); }
 
 h2 {
   font-weight: 400;
