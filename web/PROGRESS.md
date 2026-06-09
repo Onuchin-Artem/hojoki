@@ -59,6 +59,29 @@ Run `python3 web/build_web.py --stage 2`. All implemented:
 - SEO/GEO: JSON-LD `Book`, OG/Twitter, canonical, `llms.txt`.
 - Analytics: Plausible tagged-events + Cloudflare beacon.
 
+## Post-Stage-2 refinements (done, on `web-edition`)
+- Cover from `assets/cover/front-cover.jpg` (author on one line); framed.
+- Title page: red NBSP-author, one-line title, grey right-aligned translator.
+- Menu row (after cover): Підтримати ЗСУ · PDF · EPUB · Написати перекладачу · Зміст;
+  support line «Ця книжка безкоштовна. Якщо вона вам цінна…» (italic, 0.79rem),
+  half-gap to the cover. Support block is NOT repeated in the colophon.
+- Colophon = prose-section layout; credits as a list, license + © as paragraphs.
+- Sources («Джерела») = small collapsed `<details>`; the japanesewiki/Gissha link
+  merged into the translator-notes list (web-only, `merge_japanesewiki`).
+- Footnote lemmas: whole `*…*` quote (even multi-stanza) rendered as one italic
+  block with `<br>`/stanza gaps; shown only in the appendix, stripped from the
+  desktop margin note.
+- Diptych: stacked (one over the other), gap doubled.
+- `.illus + .chapter`: chapter title after an illustration gets the full
+  between-chapter gap.
+- ensō: transparent PNG (alpha = 255 − luminance, built from ensho.jpg), centred
+  on the upper golden-ratio line (0.382) of a final full-height screen.
+- Mobile: root font 83% (so the longest verse line fits one line at 375px),
+  equal 22→33px padding, title/name size overrides; 0 verse wraps at 375/390/412.
+- Typography: `bind_preps()` glues the full set of UA prepositions + short
+  conjunctions to the next word with NBSP, everywhere `inline()` runs (verse,
+  prose, notes, colophon, sources). Source files remain untouched.
+
 ## Before going live (placeholders / external)
 - Replace `{{SITE_URL}}`, `{{PLAUSIBLE_DOMAIN}}`, `{{CF_BEACON_TOKEN}}` (single
   find-replace each) once the domain/accounts exist.
