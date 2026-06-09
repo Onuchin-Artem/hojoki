@@ -1,0 +1,27 @@
+# Думки у ретрітній хатинці (Hōjōki / 方丈記)
+
+> Ukrainian translation of Kamo no Chōmei's «Hōjōki» (方丈記, 1212), a classical
+> Japanese Buddhist reflection on impermanence, solitude, and peace.
+> Translated from English into Ukrainian by Artem Onuchin.
+
+- Title (uk): Думки у ретрітній хатинці
+- Original work: 方丈記 (Hōjōki), Kamo no Chōmei, 1212
+- Author: Камо но Тьомей (Kamo no Chōmei)
+- Translator: Артем Онучін (Artem Onuchin)
+- Editor: Анна Ігнатова (Anna Ihnatova)
+- Source edition: Kamo no Chōmei, *Hōjōki: A Buddhist Reflection on Solitude,
+  Imperfection and Transcendence*, trans. Matthew Stavros, Tuttle Publishing, 2024
+- Language: Ukrainian (uk)
+- License: Creative Commons Attribution-NonCommercial 4.0 (CC BY-NC 4.0)
+- Significance: second complete Ukrainian translation of Hōjōki; the first from
+  English, and the first in 92 years (after Stepan Levynskyi, Lviv, 1934)
+- Contact: onuchinart@gmail.com
+- URL: {{SITE_URL}}
+
+## Structure
+Front matter (foreword, gratitude, the poem «Зречення»), a prologue and 15 verse
+chapters, 10 endnotes, and a colophon.
+
+## Citation
+Attribute the translation to Артем Онучін and the original to Камо но Тьомей.
+Reuse under CC BY-NC 4.0 (non-commercial, with attribution).
