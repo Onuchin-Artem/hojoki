@@ -69,9 +69,16 @@ def bind_names(s):
 
 # Ukrainian typography: prepositions / short conjunctions should not dangle at a
 # line end — glue them to the next word with NBSP (web-only; source untouched).
-_PREPS = ("у в з із зі зо к о об від до по за на над під при про для без через перед "
-          "понад попід серед між поміж коло біля крізь повз проти щодо попри заради "
-          "і й та а чи ні бо").split()
+_PREPS = (
+    # simple prepositions (incl. phonetic variants)
+    "у в з із зі зо за к ік о об на над наді під піді по при про від для до без "
+    "перед переді через понад попід попри поза позаду поперед посеред поверх повз "
+    "проти протягом біля близько коло кругом крізь між межи поміж серед "
+    "окрім крім опріч замість заради ради навколо довкола обабіч обіч осторонь "
+    "поблизу поруч поряд услід назустріч наперекір внаслідок унаслідок впродовж упродовж щодо "
+    # short conjunctions / particles that shouldn't dangle at a line end
+    "і й та а чи ні бо аби"
+).split()
 _PREP_RE = re.compile(r"\b(" + "|".join(sorted(_PREPS, key=len, reverse=True)) + r")[ \t]+",
                       re.IGNORECASE)
 def bind_preps(s):
