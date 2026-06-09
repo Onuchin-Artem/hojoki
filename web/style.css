@@ -20,7 +20,7 @@
 html { -webkit-text-size-adjust: 100%; background: var(--page); }
 /* mobile: scale every rem-based size down + tighter padding */
 @media (max-width: 640px) {
-  html { font-size: 85%; }
+  html { font-size: 83%; }   /* nudged from 85% so the longest verse line fits one line */
   :root { --pad-l: 33px; --pad-r: 33px; }   /* equal on mobile, 50% bigger */
   .title-author { font-size: 1.37rem; }     /* −2pt on mobile */
   .title-translator { font-size: 1.07rem; } /* −4pt on mobile */
