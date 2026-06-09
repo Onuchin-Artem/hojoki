@@ -67,10 +67,21 @@ def bind_names(s):
     s = s.replace("Артем Онучін", "Артем Онучін")
     return s
 
+# Ukrainian typography: prepositions / short conjunctions should not dangle at a
+# line end — glue them to the next word with NBSP (web-only; source untouched).
+_PREPS = ("у в з із зі зо к о об від до по за на над під при про для без через перед "
+          "понад попід серед між поміж коло біля крізь повз проти щодо попри заради "
+          "і й та а чи ні бо").split()
+_PREP_RE = re.compile(r"\b(" + "|".join(sorted(_PREPS, key=len, reverse=True)) + r")[ \t]+",
+                      re.IGNORECASE)
+def bind_preps(s):
+    return _PREP_RE.sub(lambda m: m.group(1) + " ", s)
+
 # ── inline markdown → HTML (preserves NBSP; html.escape leaves U+00A0 alone) ──
 def inline(s):
     s = html.escape(s, quote=False)
     s = bind_names(s)
+    s = bind_preps(s)
     s = re.sub(r"\[([^\]]+)\]\(([^)]+)\)",
                lambda m: '<a href="%s" rel="noopener">%s</a>' % (html.escape(m.group(2), quote=True), m.group(1)),
                s)
