@@ -351,7 +351,7 @@ def donate(label, location, cls):
 def support_block(location):
     return (
         f'<section class="support" aria-label="Підтримка проєкту">'
-        f'<p class="support-text">Ця книжка безкоштовна. Якщо вона була вам цінною, '
+        f'<p class="support-text">Ця книжка безкоштовна. Якщо вона вам цінна, '
         f'ви можете підтримати тих, хто захищає Україну.</p>'
         f'<p class="support-links">{donate("Підтримати ЗСУ", location, "btn")}'
         f'<a class="contact" href="mailto:{CONTACT_EMAIL}">Написати перекладачу</a></p>'
@@ -411,7 +411,14 @@ def build(stage):
         amitabha_pic = responsive(P / "Amitabha.jpeg", "amitabha", [480, 800, 1200])
         clouds_pic = responsive(P / "Clouds.jpeg", "clouds", [480, 800, 1200])
         monks_pic = responsive(P / "Monks.jpeg", "monks", [480, 800, 1200])
-        enso_pic = responsive(P / "ensho.jpg", "enso", [420, 760])
+        # ensō: black ink on white → transparent PNG (alpha = 255 − luminance),
+        # so it sits on the warm paper with no white box and needs no blend mode.
+        _e = Image.open(P / "ensho.jpg").convert("RGB")
+        _alpha = _e.convert("L").point(lambda l: max(0, min(255, int((250 - l) * 1.4))))
+        _rgba = _e.convert("RGBA"); _rgba.putalpha(_alpha)
+        ew = 640; eh = round(_e.height * ew / _e.width)
+        _rgba.resize((ew, eh), Image.LANCZOS).save(IMGDIR / "enso.png")
+        enso_dim = (ew, eh)
 
     H = []
     H.append('<article class="book">')
@@ -432,7 +439,7 @@ def build(stage):
     items = "".join(f'<li><a href="#{i}">{html.escape(t)}</a></li>' for t, i in toc)
     H.append(
         '<section class="support" id="contents" aria-label="Підтримка і зміст">'
-        '<p class="support-text">Ця книжка безкоштовна. Якщо вона була вам цінною, '
+        '<p class="support-text">Ця книжка безкоштовна. Якщо вона вам цінна, '
         'ви можете підтримати тих, хто захищає Україну.</p>'
         '<div class="support-links">'
         + donate("Підтримати ЗСУ", "after-cover", "btn")
@@ -531,8 +538,9 @@ def build(stage):
 
         # 13. ensō — final element, nothing after it
         H.append('<div class="enso" aria-label="Енсо">'
-                 + picture(enso_pic, "Енсо — каліграфічне коло", "320px", cls="enso-img")
-                 + '</div>')
+                 f'<img class="enso-img" src="assets/img/enso.png" '
+                 f'width="{enso_dim[0]}" height="{enso_dim[1]}" '
+                 'alt="Енсо — каліграфічне коло" loading="lazy" decoding="async"></div>')
 
     H.append('</article>')
 

@@ -203,8 +203,8 @@ h2 {
 .toc a:hover { border-bottom-color: var(--accent); }
 
 /* ── support / contact block ───────────────────────────────────────────── */
-.support { text-align: center; padding-block: 1.4rem 1.2rem; }
-.support-text { color: var(--muted); font-size: 0.71rem; font-style: italic; margin: 0 0 1.4rem; }
+.support { text-align: center; padding-block: 0.7rem 1.2rem; }   /* half the gap to the cover */
+.support-text { color: var(--muted); font-size: 0.79rem; font-style: italic; margin: 0 0 1.4rem; }
 .support-links { display: flex; gap: 1.4rem; justify-content: center; flex-wrap: wrap; align-items: baseline; }
 /* inline «Зміст» disclosure sitting in the support row */
 .support-links .toc summary { font-size: 0.95rem; }
@@ -354,10 +354,14 @@ h2 {
 .colophon ul { list-style: none; margin: 0 0 1.3em; padding: 0; }
 .colophon li { margin: 0 0 0.75em; }
 
-.enso { display: flex; justify-content: center; padding-block: clamp(4rem, 14vh, 9rem) clamp(12.25rem, 43vh, 27.6rem); }  /* space after +75% twice */
-.enso img {
+/* ensō fills a final screen; its centre sits on the upper golden-ratio line */
+.enso { position: relative; min-height: 100svh; }
+.enso .enso-img {
+  position: absolute;
+  top: 38.2%;                 /* upper golden-ratio line */
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: block;
-  width: min(320px, 70%);
-  height: auto;
-  mix-blend-mode: multiply;   /* drop the white JPG box onto the warm paper */
+  width: min(320px, 70vw);
+  height: auto;               /* transparent PNG — no blend needed */
 }
