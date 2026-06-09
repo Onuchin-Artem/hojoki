@@ -202,7 +202,7 @@ h2 {
 
 /* ── support / contact block ───────────────────────────────────────────── */
 .support { text-align: center; padding-block: 1.4rem 1.2rem; }
-.support-text { color: var(--muted); font-size: 0.88rem; font-style: italic; margin: 0 0 1.4rem; }
+.support-text { color: var(--muted); font-size: 0.71rem; font-style: italic; margin: 0 0 1.4rem; }
 .support-links { display: flex; gap: 1.4rem; justify-content: center; flex-wrap: wrap; align-items: baseline; }
 /* inline «Зміст» disclosure sitting in the support row */
 .support-links .toc summary { font-size: 0.95rem; }
@@ -324,23 +324,33 @@ h2 {
   display: flex;
   flex-direction: column;          /* one photo on top of the other */
   align-items: center;
-  gap: clamp(1.4rem, 4vh, 2.6rem);
+  gap: clamp(2.8rem, 8vh, 5.2rem);   /* 2× the previous distance */
   padding: clamp(2rem, 6vh, 4rem) clamp(1rem, 4%, 2rem);
 }
 .diptych .dip-img { width: min(360px, 80%); }
 .diptych img { display: block; width: 100%; height: auto; }
 
 .sources { margin-top: 2.6rem; font-size: var(--fm); }
-.sources h3 { color: var(--accent); font-weight: 400; font-size: 1.18rem; margin: 0 0 1rem; }
+.sources summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  color: var(--accent);
+  font-size: 0.95rem;          /* small «Джерела» toggle */
+}
+.sources summary::-webkit-details-marker { display: none; }
+.sources summary::after { content: " +"; font-size: 0.8em; opacity: 0.7; }
+.sources[open] summary::after { content: " –"; }
+.sources[open] summary { margin-bottom: 1.1rem; }
 .sources ul { margin: 0 0 1rem; padding-left: 1.1em; }
 .sources li { margin: 0 0 0.45em; }
 .sources p { margin: 1em 0 0.4em; }
 .sources a { color: var(--ink); text-decoration: none; border-bottom: 1px solid rgba(37,33,32,0.25); word-break: break-word; }
 .sources a:hover { border-bottom-color: var(--accent); }
 
-.colophon .prose { font-size: var(--fm); }
 .colophon .prose p { margin: 0 0 0.9em; }
-.colophon .support { padding-top: 1.6rem; }
+.colophon ul { list-style: none; margin: 0 0 1.3em; padding: 0; }
+.colophon li { margin: 0 0 0.75em; }
 
 .enso { display: flex; justify-content: center; padding: clamp(4rem, 14vh, 9rem) 0; }
 .enso img {

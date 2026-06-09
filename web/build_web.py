@@ -253,8 +253,22 @@ def parse_footnotes():
         # dedent: strip leading indentation that markdown uses for the note body
         lines = [re.sub(r"^[ \t]{1,4}", "", ln) for ln in block.splitlines()]
         notes[key] = md_to_html(lines, first_is_lemma=True)
-    sources = md_to_html(parts[1].splitlines()) if len(parts) > 1 else ""
+    sources = md_to_html(merge_japanesewiki(parts[1]).splitlines()) if len(parts) > 1 else ""
     return notes, sources
+
+def merge_japanesewiki(md):
+    """Web-only: move the japanesewiki (Gissha) link into the first list (translator's
+    source notes) and drop its separate «Окремий ресурс» heading. Source stays as-is."""
+    lines = md.splitlines()
+    gi = next((i for i, l in enumerate(lines) if "japanesewiki.com" in l), None)
+    if gi is None:
+        return md
+    gissha = lines.pop(gi)
+    lines = [l for l in lines if "Окремий ресурс" not in l]
+    wiki = next((i for i, l in enumerate(lines) if l.strip().startswith("Вікіпедія")), len(lines))
+    ins = next((i + 1 for i in range(wiki - 1, -1, -1) if lines[i].strip().startswith("-")), 0)
+    lines.insert(ins, gissha)
+    return "\n".join(lines)
 
 def md_to_html(lines, first_is_lemma=False):
     out, para, lst, first = [], [], [], True
@@ -477,7 +491,7 @@ def build(stage):
         note_items.append(
             f'<li class="note" id="fn-{n}"><span class="note-num">{n}</span>'
             f'<div class="note-body">{notes[k]}{back}</div></li>')
-    sources_block = (f'<div class="sources"><h3>Джерела</h3>{sources}</div>'
+    sources_block = (f'<details class="sources"><summary>Джерела</summary>{sources}</details>'
                      if (stage == 2 and sources) else "")
     H.append(f'<section class="notes" id="notes" aria-label="Примітки">'
              f'<h2>Примітки</h2><ol class="note-list">{"".join(note_items)}</ol>'
@@ -485,7 +499,7 @@ def build(stage):
 
     # 12. colophon -------------------------------------------------------------
     if stage == 2:
-        colo_paras = [
+        credits = [
             "Переклад з англійської — Артем Онучін, з дозволу автора англомовного видання.",
             "Англомовне видання: Kamo no Chōmei. *Hōjōki: A Buddhist Reflection on Solitude, "
             "Imperfection and Transcendence*. Translated and annotated by Matthew Stavros. "
@@ -495,15 +509,14 @@ def build(stage):
             "Garchen Buddhist Institute.",
             "Це другий повний український переклад «Ходзьокі» — перший з англійської "
             "і перший за 92 роки, після перекладу Степана Левинського (Львів, 1934).",
-            "Видання поширюється на умовах ліцензії Creative Commons «Зазначення авторства — "
-            "Некомерційна — 4.0 Міжнародна» "
-            "([CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)).",
-            "© Артем Онучін, 2026.",
         ]
-        colo = "".join(f"<p>{inline(p)}</p>" for p in colo_paras)
-        H.append(f'<section class="colophon" id="colophon" aria-label="Колофон">'
-                 f'<h2>Колофон</h2><div class="prose">{colo}</div>'
-                 f'{support_block("colophon")}</section>')
+        license_p = ("Видання поширюється на умовах ліцензії Creative Commons «Зазначення "
+                     "авторства — Некомерційна — 4.0 Міжнародна» "
+                     "([CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)).")
+        colo_list = '<ul>' + "".join(f"<li>{inline(c)}</li>" for c in credits) + '</ul>'
+        colo_tail = f'<p>{inline(license_p)}</p><p>© Артем Онучін, 2026.</p>'
+        H.append(f'<section class="colophon prose-section" id="colophon" aria-label="Колофон">'
+                 f'<h2>Колофон</h2><div class="prose">{colo_list}{colo_tail}</div></section>')
 
         # 13. ensō — final element, nothing after it
         H.append('<div class="enso" aria-label="Енсо">'
