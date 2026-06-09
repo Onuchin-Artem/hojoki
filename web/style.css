@@ -354,7 +354,7 @@ h2 {
 .colophon ul { list-style: none; margin: 0 0 1.3em; padding: 0; }
 .colophon li { margin: 0 0 0.75em; }
 
-.enso { display: flex; justify-content: center; padding-block: clamp(4rem, 14vh, 9rem) clamp(7rem, 24.5vh, 15.75rem); }  /* space after +75% */
+.enso { display: flex; justify-content: center; padding-block: clamp(4rem, 14vh, 9rem) clamp(12.25rem, 43vh, 27.6rem); }  /* space after +75% twice */
 .enso img {
   display: block;
   width: min(320px, 70%);
