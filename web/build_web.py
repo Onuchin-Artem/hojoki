@@ -16,7 +16,7 @@ collapse them. Verse line breaks are preserved verbatim; prose reflows.
 
 Run from anywhere:  python3 web/build_web.py [--stage 1|2]
 """
-import re, html, pathlib, argparse, shutil
+import re, html, json, pathlib, argparse, shutil
 from PIL import Image
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -25,7 +25,14 @@ IMGDIR = OUT / "assets" / "img"
 
 DONATE_URL = "https://savelife.in.ua/donate"
 CONTACT_EMAIL = "onuchinart@gmail.com"
-PLAUSIBLE_DOMAIN = "{{PLAUSIBLE_DOMAIN}}"   # single find-replace once the domain exists
+# find-replace placeholders, filled once hosting is set up:
+PLAUSIBLE_DOMAIN = "{{PLAUSIBLE_DOMAIN}}"
+CF_BEACON_TOKEN = "{{CF_BEACON_TOKEN}}"
+SITE_URL = "{{SITE_URL}}"
+
+DESCRIPTION = ("Український переклад «Ходзьокі» (方丈記) Камо но Тьомея — "
+               "медитація XIII століття про непостійність, самоту й спокій. "
+               "Переклад з англійської Артема Онучіна.")
 
 # Endnote order = first appearance across the whole body (matches build_body.py).
 NOTE_ORDER = [
@@ -246,7 +253,8 @@ def parse_footnotes():
         # dedent: strip leading indentation that markdown uses for the note body
         lines = [re.sub(r"^[ \t]{1,4}", "", ln) for ln in block.splitlines()]
         notes[key] = md_to_html(lines, first_is_lemma=True)
-    return notes
+    sources = md_to_html(parts[1].splitlines()) if len(parts) > 1 else ""
+    return notes, sources
 
 def md_to_html(lines, first_is_lemma=False):
     out, para, lst, first = [], [], [], True
@@ -318,7 +326,7 @@ def donate(label, location, cls):
 def support_block(location):
     return (
         f'<section class="support" aria-label="Підтримка проєкту">'
-        f'<p class="support-text">Ця книжка вільна. Якщо вона була вам цінною, '
+        f'<p class="support-text">Ця книжка безкоштовна. Якщо вона була вам цінною, '
         f'ви можете підтримати тих, хто захищає Україну.</p>'
         f'<p class="support-links">{donate("Підтримати ЗСУ", location, "btn")}'
         f'<a class="contact" href="mailto:{CONTACT_EMAIL}">Написати перекладачу</a></p>'
@@ -328,6 +336,38 @@ def support_block(location):
 def breath():
     return '<div class="breath" role="presentation" aria-hidden="true"></div>'
 
+def write_llms_txt():
+    """GEO: a machine-readable summary for generative engines."""
+    txt = f"""# Думки у ретрітній хатинці (Hōjōki / 方丈記)
+
+> Ukrainian translation of Kamo no Chōmei's «Hōjōki» (方丈記, 1212), a classical
+> Japanese Buddhist reflection on impermanence, solitude, and peace.
+> Translated from English into Ukrainian by Artem Onuchin.
+
+- Title (uk): Думки у ретрітній хатинці
+- Original work: 方丈記 (Hōjōki), Kamo no Chōmei, 1212
+- Author: Камо но Тьомей (Kamo no Chōmei)
+- Translator: Артем Онучін (Artem Onuchin)
+- Editor: Анна Ігнатова (Anna Ihnatova)
+- Source edition: Kamo no Chōmei, *Hōjōki: A Buddhist Reflection on Solitude,
+  Imperfection and Transcendence*, trans. Matthew Stavros, Tuttle Publishing, 2024
+- Language: Ukrainian (uk)
+- License: Creative Commons Attribution-NonCommercial 4.0 (CC BY-NC 4.0)
+- Significance: second complete Ukrainian translation of Hōjōki; the first from
+  English, and the first in 92 years (after Stepan Levynskyi, Lviv, 1934)
+- Contact: {CONTACT_EMAIL}
+- URL: {SITE_URL}
+
+## Structure
+Front matter (foreword, gratitude, the poem «Зречення»), a prologue and 15 verse
+chapters, 10 endnotes, and a colophon.
+
+## Citation
+Attribute the translation to Артем Онучін and the original to Камо но Тьомей.
+Reuse under CC BY-NC 4.0 (non-commercial, with attribution).
+"""
+    (OUT / "llms.txt").write_text(txt, encoding="utf-8")
+
 def build(stage):
     sections = list(split_sections(SRC))
     # front matter = before {.book-title}; body = after
@@ -336,12 +376,17 @@ def build(stage):
     book_title = sections[bt][0]
     body = sections[bt + 1:]
     captions = parse_captions()
-    notes = parse_footnotes()
+    notes, sources = parse_footnotes()
 
     # images -------------------------------------------------------------------
-    cover_pic = responsive(ROOT / "build/_front.png", "cover", [520, 820, 1043], quality=82)
-    hut_pic = responsive(ROOT / "assets/images/processed/retreat-hut.jpeg",
-                         "retreat-hut", [480, 800, 1200])
+    P = ROOT / "assets/images/processed"
+    cover_pic = responsive(ROOT / "assets/cover/front-cover.jpg", "cover", [560, 900, 1300], quality=84)
+    hut_pic = responsive(P / "retreat-hut.jpeg", "retreat-hut", [480, 800, 1200])
+    if stage == 2:
+        amitabha_pic = responsive(P / "Amitabha.jpeg", "amitabha", [480, 800, 1200])
+        clouds_pic = responsive(P / "Clouds.jpeg", "clouds", [480, 800, 1200])
+        monks_pic = responsive(P / "Monks.jpeg", "monks", [480, 800, 1200])
+        enso_pic = responsive(P / "ensho.jpg", "enso", [420, 760])
 
     H = []
     H.append('<article class="book">')
@@ -362,10 +407,12 @@ def build(stage):
     items = "".join(f'<li><a href="#{i}">{html.escape(t)}</a></li>' for t, i in toc)
     H.append(
         '<section class="support" id="contents" aria-label="Підтримка і зміст">'
-        '<p class="support-text">Ця книжка вільна. Якщо вона була вам цінною, '
+        '<p class="support-text">Ця книжка безкоштовна. Якщо вона була вам цінною, '
         'ви можете підтримати тих, хто захищає Україну.</p>'
         '<div class="support-links">'
         + donate("Підтримати ЗСУ", "after-cover", "btn")
+        + '<a class="contact" href="hojoki.pdf" download>PDF</a>'
+        + '<a class="contact" href="hojoki.epub" download>EPUB</a>'
         + f'<a class="contact" href="mailto:{CONTACT_EMAIL}">Написати перекладачу</a>'
         + f'<details class="toc"><summary>Зміст</summary><ol>{items}</ol></details>'
         + '</div></section>')
@@ -403,11 +450,24 @@ def build(stage):
     for idx, (t, a, b) in enumerate(body):
         if stage == 1 and not in_stage1(t):
             continue
-        verse = parse_verse(b)
+        # Амітабга illustration before «Моя маленька хатинка»
+        if stage == 2 and norm(t) == "Моя маленька хатинка":
+            H.append(figure("Амітабга", amitabha_pic,
+                            "Статуя Будди Амітабги в ретрітному центрі Garchen Buddhist Institute",
+                            captions.get("Амітабга", [])))
+        poem, sig = split_signature(b)   # trailing «Написано монахом …» → colophon-signature
+        sig_html = render_signature(sig) if sig else ""
         H.append(f'<section class="chapter" id="{slug(t)}">'
-                 f'<h2>{html.escape(t)}</h2>{render_verse(verse)}</section>')
+                 f'<h2>{html.escape(t)}</h2>{render_verse(parse_verse(poem))}{sig_html}</section>')
 
-    # 11. notes (always present) ----------------------------------------------
+    # 10. diptych (Clouds + Monks, no captions) --------------------------------
+    if stage == 2:
+        H.append('<figure class="diptych" aria-label="Хмари і монахи">'
+                 + picture(clouds_pic, "Хмари над горами Тояма", "(max-width: 700px) 90vw, 330px", cls="dip-img")
+                 + picture(monks_pic, "Монахи на ретріті", "(max-width: 700px) 90vw, 330px", cls="dip-img")
+                 + '</figure>')
+
+    # 11. notes (always present) + «Джерела» -----------------------------------
     note_items = []
     used = [k for k in NOTE_ORDER if (stage == 2 or k in {"era-angen"})]
     for k in used:
@@ -417,8 +477,38 @@ def build(stage):
         note_items.append(
             f'<li class="note" id="fn-{n}"><span class="note-num">{n}</span>'
             f'<div class="note-body">{notes[k]}{back}</div></li>')
+    sources_block = (f'<div class="sources"><h3>Джерела</h3>{sources}</div>'
+                     if (stage == 2 and sources) else "")
     H.append(f'<section class="notes" id="notes" aria-label="Примітки">'
-             f'<h2>Примітки</h2><ol class="note-list">{"".join(note_items)}</ol></section>')
+             f'<h2>Примітки</h2><ol class="note-list">{"".join(note_items)}</ol>'
+             f'{sources_block}</section>')
+
+    # 12. colophon -------------------------------------------------------------
+    if stage == 2:
+        colo_paras = [
+            "Переклад з англійської — Артем Онучін, з дозволу автора англомовного видання.",
+            "Англомовне видання: Kamo no Chōmei. *Hōjōki: A Buddhist Reflection on Solitude, "
+            "Imperfection and Transcendence*. Translated and annotated by Matthew Stavros. "
+            "Tokyo: Tuttle Publishing, 2024.",
+            "Редагування — Анна Ігнатова.",
+            "Фотографії та каліграфія — Артем Онучін. Знято в ретрітному центрі "
+            "Garchen Buddhist Institute.",
+            "Це другий повний український переклад «Ходзьокі» — перший з англійської "
+            "і перший за 92 роки, після перекладу Степана Левинського (Львів, 1934).",
+            "Видання поширюється на умовах ліцензії Creative Commons «Зазначення авторства — "
+            "Некомерційна — 4.0 Міжнародна» "
+            "([CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)).",
+            "© Артем Онучін, 2026.",
+        ]
+        colo = "".join(f"<p>{inline(p)}</p>" for p in colo_paras)
+        H.append(f'<section class="colophon" id="colophon" aria-label="Колофон">'
+                 f'<h2>Колофон</h2><div class="prose">{colo}</div>'
+                 f'{support_block("colophon")}</section>')
+
+        # 13. ensō — final element, nothing after it
+        H.append('<div class="enso" aria-label="Енсо">'
+                 + picture(enso_pic, "Енсо — каліграфічне коло", "320px", cls="enso-img")
+                 + '</div>')
 
     H.append('</article>')
 
@@ -427,11 +517,46 @@ def build(stage):
     H.append(f'{donate("Підтримати ЗСУ", "corner", "donate-corner")}')
 
     body_html = "\n".join(H)
+    cover_jpg = f"assets/img/{cover_pic['base']}-{cover_pic['widths'][-1]}.jpg"
+    og_image = f"{SITE_URL}/{cover_jpg}"
+
+    # GEO: schema.org Book/CreativeWork
+    ld = {
+        "@context": "https://schema.org",
+        "@type": "Book",
+        "name": "Думки у ретрітній хатинці",
+        "alternateName": "Hōjōki / 方丈記",
+        "inLanguage": "uk",
+        "url": SITE_URL,
+        "image": og_image,
+        "author": {"@type": "Person", "name": "Камо но Тьомей", "alternateName": "Kamo no Chōmei"},
+        "translator": {"@type": "Person", "name": "Артем Онучін"},
+        "editor": {"@type": "Person", "name": "Анна Ігнатова"},
+        "datePublished": "2026",
+        "license": "https://creativecommons.org/licenses/by-nc/4.0/",
+        "description": DESCRIPTION,
+        "isBasedOn": {
+            "@type": "Book",
+            "name": "Hōjōki: A Buddhist Reflection on Solitude, Imperfection and Transcendence",
+            "author": {"@type": "Person", "name": "Kamo no Chōmei"},
+            "translator": {"@type": "Person", "name": "Matthew Stavros"},
+            "publisher": {"@type": "Organization", "name": "Tuttle Publishing"},
+            "datePublished": "2024",
+        },
+        "exampleOfWork": {"@type": "Book", "name": "方丈記 (Hōjōki)", "dateCreated": "1212"},
+    }
+    jsonld_tag = ('<script type="application/ld+json">'
+                  + json.dumps(ld, ensure_ascii=False) + '</script>')
+    cf_beacon = ('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
+                 'data-cf-beacon=\'{"token": "' + CF_BEACON_TOKEN + '"}\'></script>')
+
     page = PAGE.format(
-        body=body_html, css="style.css", plausible=PLAUSIBLE_DOMAIN,
-        donate=DONATE_URL, cover_jpg=f"assets/img/{cover_pic['base']}-{cover_pic['widths'][-1]}.jpg",
+        body=body_html, css="style.css", plausible=PLAUSIBLE_DOMAIN, donate=DONATE_URL,
+        description=html.escape(DESCRIPTION, quote=True), og_image=og_image,
+        site_url=SITE_URL, jsonld=jsonld_tag, cf_beacon=cf_beacon,
     )
     (OUT / "index.html").write_text(page, encoding="utf-8")
+    write_llms_txt()
     print(f"index.html written (stage {stage}); notes: {len(used)}; chapters: "
           f"{sum(1 for t,_,_ in body if stage==2 or in_stage1(t))}")
 
@@ -442,18 +567,24 @@ PAGE = """<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Думки у ретрітній хатинці — Камо но Тьомей</title>
-<meta name="description" content="Український переклад «Ходзьокі» (方丈記) Камо но Тьомея — медитація про непостійність, самоту й спокій. Переклад Артема Онучіна.">
+<meta name="description" content="{description}">
 <meta property="og:type" content="book">
 <meta property="og:locale" content="uk_UA">
-<meta property="og:title" content="Думки у ретрітній хатинці">
-<meta property="og:description" content="Український переклад «Ходзьокі» Камо но Тьомея.">
-<meta property="og:image" content="{cover_jpg}">
+<meta property="og:site_name" content="Думки у ретрітній хатинці">
+<meta property="og:title" content="Думки у ретрітній хатинці — Камо но Тьомей">
+<meta property="og:description" content="{description}">
+<meta property="og:url" content="{site_url}">
+<meta property="og:image" content="{og_image}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="{site_url}">
+{jsonld}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:wght@500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:wght@500&display=swap">
 <link rel="stylesheet" href="{css}">
 <script defer data-domain="{plausible}" src="https://plausible.io/js/script.tagged-events.js"></script>
+{cf_beacon}
 </head>
 <body>
 {body}

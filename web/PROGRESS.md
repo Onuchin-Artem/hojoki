@@ -45,16 +45,25 @@ Built & reviewed: cover → support/contents row → Передмова → По
   `onuchinart@gmail.com`. Click tracking = Plausible custom event `Donate`
   (`tagged-events`); `PLAUSIBLE_DOMAIN` is still a `{{...}}` placeholder.
 
-## STAGE 2 — TODO
-- Emit all chapters (flip stage / extend `STAGE1_CHAPTERS`).
-- Амітабга illustration before «Моя маленька хатинка»; Clouds+Monks diptych.
-- Full Примітки (all 10) incl. «Джерела» appendix; author colophon-signature after
-  «Досвітня тиша».
-- Колофон section (translator, editor Анна Ігнатова, photos, CC BY-NC 4.0, the
-  "2nd full UA translation" note) + ensō as the final element.
-- SEO/GEO: JSON-LD `Book`, `llms.txt`, finalize OG.
-- Analytics: Cloudflare Web Analytics (pageviews) + set real Plausible domain.
-- Full image optimization pass (AVIF needs `avifenc`, not installed yet).
-- Re-check NBSP width in Arsenal; mobile QA at ≤375px.
+## STAGE 2 — DONE
+Run `python3 web/build_web.py --stage 2`. All implemented:
+- All 15 chapters; Амітабга illustration before «Моя маленька хатинка»; Clouds+Monks
+  diptych (stacked, no captions).
+- All 10 Примітки + «Джерела» appendix; author colophon-signature after «Досвітня
+  тиша» (italic, right-aligned, line breaks preserved).
+- Колофон (translator, editor Анна Ігнатова, photos, CC BY-NC 4.0 link, the
+  "2nd full UA translation / 92 years / Левинський 1934" note, support block) +
+  ensō as the final element (`mix-blend-mode: multiply` to drop its white box).
+- Cover now from `assets/cover/front-cover.jpg` (author on one line).
+- Menu row: Підтримати ЗСУ · PDF · EPUB · Написати перекладачу · Зміст.
+- SEO/GEO: JSON-LD `Book`, OG/Twitter, canonical, `llms.txt`.
+- Analytics: Plausible tagged-events + Cloudflare beacon.
+
+## Before going live (placeholders / external)
+- Replace `{{SITE_URL}}`, `{{PLAUSIBLE_DOMAIN}}`, `{{CF_BEACON_TOKEN}}` (single
+  find-replace each) once the domain/accounts exist.
+- Drop the downloadable `web/hojoki.pdf` and `web/hojoki.epub` next to index.html
+  (the menu links are relative to them).
+- Optional: AVIF variants (needs `avifenc`); NBSP-width check in Arsenal.
 
 See also memory files web-*.md.

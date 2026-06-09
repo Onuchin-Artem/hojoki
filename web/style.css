@@ -316,3 +316,36 @@ h2 {
   transition: opacity 0.9s ease, transform 0.9s ease;
 }
 .reveal-on .shown { opacity: 1; transform: none; }
+
+/* ── back matter: diptych, sources, colophon, ensō ─────────────────────── */
+.diptych {
+  margin: 0;
+  background: var(--panel);
+  display: flex;
+  flex-direction: column;          /* one photo on top of the other */
+  align-items: center;
+  gap: clamp(1.4rem, 4vh, 2.6rem);
+  padding: clamp(2rem, 6vh, 4rem) clamp(1rem, 4%, 2rem);
+}
+.diptych .dip-img { width: min(360px, 80%); }
+.diptych img { display: block; width: 100%; height: auto; }
+
+.sources { margin-top: 2.6rem; font-size: var(--fm); }
+.sources h3 { color: var(--accent); font-weight: 400; font-size: 1.18rem; margin: 0 0 1rem; }
+.sources ul { margin: 0 0 1rem; padding-left: 1.1em; }
+.sources li { margin: 0 0 0.45em; }
+.sources p { margin: 1em 0 0.4em; }
+.sources a { color: var(--ink); text-decoration: none; border-bottom: 1px solid rgba(37,33,32,0.25); word-break: break-word; }
+.sources a:hover { border-bottom-color: var(--accent); }
+
+.colophon .prose { font-size: var(--fm); }
+.colophon .prose p { margin: 0 0 0.9em; }
+.colophon .support { padding-top: 1.6rem; }
+
+.enso { display: flex; justify-content: center; padding: clamp(4rem, 14vh, 9rem) 0; }
+.enso img {
+  display: block;
+  width: min(320px, 70%);
+  height: auto;
+  mix-blend-mode: multiply;   /* drop the white JPG box onto the warm paper */
+}
