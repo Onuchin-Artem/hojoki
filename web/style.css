@@ -1,0 +1,318 @@
+/* «Думки у ретрітній хатинці» — web edition.
+   Cormorant Garamond → book title only. Arsenal → everything else. */
+
+:root {
+  --bg: #fdfcf8;          /* warm near-white — never pure #fff */
+  --ink: #252120;         /* charcoal */
+  --accent: #e46340;      /* brick orange */
+  --panel: #e8e6dc;       /* illustration / marginalia field */
+  --muted: #6f685f;       /* signatures, secondary */
+  --page: #15110d;        /* warm near-black "dark paper" behind the reading block */
+  --measure: 33rem;       /* reading column */
+  --margin-w: 17rem;      /* desktop marginalia width */
+  --fm: 0.94rem;          /* front-matter / appendix text size */
+  --pad-l: 50px;          /* content padding, left */
+  --pad-r: 75px;          /* content padding, right */
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; background: var(--page); }
+/* mobile: scale every rem-based size down + tighter padding */
+@media (max-width: 640px) {
+  html { font-size: 85%; }
+  :root { --pad-l: 33px; --pad-r: 33px; }   /* equal on mobile, 50% bigger */
+  .title-author { font-size: 1.37rem; }     /* −2pt on mobile */
+  .title-translator { font-size: 1.07rem; } /* −4pt on mobile */
+  .title-page h1 { font-size: clamp(2.15rem, 5vw, 3.4rem); }  /* +2pt on mobile */
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+body {
+  margin: 0;
+  background-color: var(--page);
+  /* faint paper grain over the dark field */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  color: var(--ink);
+  font-family: "Arsenal", system-ui, sans-serif;
+  font-size: clamp(1.02rem, 0.98rem + 0.4vw, 1.18rem);
+  line-height: 1.62;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  text-align: left;
+  hyphens: none;
+  overflow-wrap: break-word;
+}
+
+/* the whole book is a light reading block centred on the black field */
+.book {
+  overflow: clip;
+  width: 720px;             /* fixed, centred on the black field */
+  max-width: 100%;
+  margin-inline: auto;
+  background: var(--bg);
+}
+@media (max-width: 900px) { .book { width: 100%; } }
+
+/* front matter + appendix read a touch smaller than the body verse */
+.prose-section, .chapter.renunciation { font-size: var(--fm); }
+
+/* ── shared layout ─────────────────────────────────────────────────────── */
+/* sections fill the light block; the block width controls line length */
+.chapter, .prose-section, .support, .notes {
+  padding-inline: var(--pad-l) var(--pad-r);
+}
+.chapter, .prose-section, .notes { padding-block: clamp(1.8rem, 5vh, 3.4rem); }
+.prose-section { padding-block: clamp(0.8rem, 2vh, 1.4rem); }   /* front matter sits tighter */
+.chapter { padding-block: clamp(2.2rem, 4.8vh, 3.8rem) clamp(1.1rem, 2.4vh, 1.9rem); }  /* top 2× the bottom */
+
+h2 {
+  font-weight: 400;
+  color: var(--accent);
+  font-size: 1.58rem;        /* +2pt over the previous 1.42rem */
+  letter-spacing: 0.01em;
+  text-align: left;
+  margin: 0 0 2.2rem;
+}
+
+/* ── cover (entry screen) ──────────────────────────────────────────────── */
+.cover {
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+}
+.cover .cover-img, .cover img {
+  display: block;
+  max-height: 92svh;
+  width: auto;
+  max-width: 100%;
+  border: 1px solid rgba(37, 33, 32, 0.45);   /* framed cover */
+}
+
+/* ── title page ────────────────────────────────────────────────────────── */
+.title-page {
+  min-height: 60svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;     /* group vertically centred */
+  align-items: flex-start;     /* flush left */
+  text-align: left;
+  padding: 3rem var(--pad-r) 3rem var(--pad-l);
+}
+.title-author {
+  color: var(--accent);
+  font-size: 1.57rem;       /* 4pt smaller */
+  margin: 0 0 0.7rem;       /* more distance to the title */
+}
+.title-translator {
+  color: var(--muted);
+  font-size: 1.44rem;       /* +6pt over the front-matter size */
+  margin: 1.6rem 0 0;       /* more distance from the title */
+  align-self: stretch;      /* span the title width … */
+  text-align: right;        /* … and sit at the right edge */
+}
+.title-page h1 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 500;
+  color: var(--ink);
+  font-size: clamp(1.95rem, 5vw, 3.4rem);   /* floor keeps it > the names on mobile; one line */
+  white-space: nowrap;
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ── prose ─────────────────────────────────────────────────────────────── */
+.prose p { margin: 0 0 1.15em; text-align: left; hyphens: none; }
+
+/* ── verse ─────────────────────────────────────────────────────────────── */
+.verse { line-height: 1.74; }
+.verse .stanza {
+  margin: 0 0 1.4em;
+  /* hanging indent: long wrapped lines stay visibly subordinate to the line */
+}
+.verse .line {
+  display: block;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+}
+.verse .stanza.indent { margin-left: var(--indent, 2em); }
+.verse .verse-space { margin: 0; height: 1.6em; }   /* an empty paragraph (bare `~`) */
+
+/* ── signature (after «Зречення», author colophon) ─────────────────────── */
+.signature {
+  margin-top: 2.4rem;
+  text-align: right;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.signature p { margin: 0 0 0.9em; }
+
+/* ── illustration block: photo on top, description below ───────────────── */
+.illus {
+  background: var(--panel);
+  margin: 0;
+  padding: clamp(2rem, 6vh, 4rem) 0;
+}
+.illus .fig-img, .illus picture { display: block; }
+.illus img {
+  display: block;
+  width: min(360px, 78vw);      /* 50% larger than the 240px pass; still fits the screen */
+  height: auto;
+  max-height: 80svh;
+  object-fit: contain;
+  margin: 0 auto clamp(1.4rem, 4vh, 2.4rem);
+}
+.illus figcaption {
+  padding-inline: var(--pad-l) var(--pad-r);
+}
+.fig-name {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.18rem;
+  margin: 0 0 0.9rem;
+}
+.illus figcaption .prose { font-size: var(--fm); }   /* description same size as front matter */
+
+/* ── table of contents (hidden, revealed by the «Зміст» button) ────────── */
+.toc summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  color: var(--accent);
+  font-size: 1.42rem;
+  letter-spacing: 0.01em;
+}
+.toc summary::-webkit-details-marker { display: none; }
+.toc summary::after {
+  content: " +";
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+.toc[open] summary::after { content: " –"; }
+.toc[open] summary { margin-bottom: 1.6rem; }
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc li { margin: 0.55em 0; }
+.toc a { color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; }
+.toc a:hover { border-bottom-color: var(--accent); }
+
+/* ── support / contact block ───────────────────────────────────────────── */
+.support { text-align: center; padding-block: 1.4rem 1.2rem; }
+.support-text { color: var(--muted); font-size: 0.88rem; font-style: italic; margin: 0 0 1.4rem; }
+.support-links { display: flex; gap: 1.4rem; justify-content: center; flex-wrap: wrap; align-items: baseline; }
+/* inline «Зміст» disclosure sitting in the support row */
+.support-links .toc summary { font-size: 0.95rem; }
+.support-links details[open] summary { margin-bottom: 0.8rem; }
+.support-links details[open] { flex-basis: 100%; text-align: center; }
+.support-links .toc ol { display: inline-block; text-align: left; }
+.btn {
+  display: inline-block;
+  color: var(--bg); background: var(--accent);
+  text-decoration: none;
+  padding: 0.55em 1.3em; border-radius: 2px;
+  font-size: 0.92rem;
+}
+.btn:hover { filter: brightness(0.94); }
+.contact { color: var(--accent); text-decoration: none; font-size: 0.92rem; border-bottom: 1px solid transparent; }
+.contact:hover { border-bottom-color: var(--accent); }
+
+/* ── breathing pauses & gaps ───────────────────────────────────────────── */
+.breath { min-height: 40svh; }
+.chapter-gap { min-height: 22svh; }
+
+/* ── footnotes ─────────────────────────────────────────────────────────── */
+.fnref {
+  color: var(--accent);
+  font-size: 0.62em;
+  vertical-align: super;
+  line-height: 0;
+  text-decoration: none;
+  padding: 0 0.15em;
+  cursor: pointer;
+  scroll-margin-top: 30vh;
+}
+.fnref::before { content: "["; }
+.fnref::after { content: "]"; }
+
+/* floating desktop marginalia */
+.marginalia {
+  position: absolute;
+  width: var(--margin-w);
+  background: var(--panel);        /* same warm grey as illustration blocks */
+  color: var(--ink);
+  padding: 1.1rem 1.2rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  border-radius: 2px;
+  z-index: 20;
+}
+.marginalia p { margin: 0 0 0.7em; }
+.marginalia .lemma { color: var(--muted); }
+.marginalia a { color: var(--accent); }
+.marginalia .fn-back { display: none; }
+@media (max-width: 979px) { .marginalia { display: none !important; } }
+
+/* always-present notes section */
+.note-list { list-style: none; margin: 0; padding: 0; }
+.note {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  gap: 0.6rem;
+  margin: 0 0 2.4rem;
+  scroll-margin-top: 12vh;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+.note-num { color: var(--accent); font-weight: 700; }
+.note-body { min-width: 0; }   /* allow the 1fr grid track to wrap, not overflow */
+.note-body p { margin: 0 0 0.7em; }
+.note-body .lemma { color: var(--muted); }
+.note-body ul { margin: 0.4em 0 0.8em; padding-left: 1.1em; }
+.note-body li { margin: 0 0 0.5em; }
+.note-body hr { border: 0; border-top: 1px solid rgba(37,33,32,0.18); margin: 1em 0; }
+.note:target { background: rgba(228,99,64,0.07); border-radius: 3px; }
+@media (max-width: 979px) { .note:target { background: transparent; } }   /* no tint on mobile jump */
+.fn-back {
+  display: inline-block;
+  margin-top: 0.4em;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.85em;
+}
+.fn-back:hover { text-decoration: underline; }
+@media (min-width: 980px) { .notes .fn-back { display: none; } } /* no return needed if margin notes used */
+
+/* ── corner donate (desktop only) ──────────────────────────────────────── */
+.donate-corner {
+  position: fixed;
+  top: 1rem; right: 1rem;
+  z-index: 30;
+  background: var(--accent);
+  color: var(--bg);
+  text-decoration: none;
+  font-size: 0.8rem;
+  padding: 0.45em 0.95em;
+  border-radius: 2px;
+  opacity: 0.92;
+  transition: opacity 0.5s ease;
+}
+.donate-corner.dim { opacity: 0.4; }
+.donate-corner.dim:hover { opacity: 0.92; }
+@media (max-width: 979px) { .donate-corner { display: none; } }
+
+/* ── subtle reveal on scroll (only when motion is allowed) ─────────────── */
+.reveal-on .chapter,
+.reveal-on .prose-section,
+.reveal-on .illus,
+.reveal-on .toc,
+.reveal-on .support,
+.reveal-on .notes {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal-on .shown { opacity: 1; transform: none; }
