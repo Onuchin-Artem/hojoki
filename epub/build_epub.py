@@ -531,6 +531,10 @@ def build():
         sys.exit("no WOFF2 fonts in assets/fonts/web — convert them first")
     for f in fonts:
         shutil.copy2(f, OEBPS / "fonts" / f.name)
+    # OFL requires shipping the license with the embedded fonts
+    font_licenses = sorted((ROOT / "assets/fonts").glob("OFL-*.txt"))
+    for lic in font_licenses:
+        shutil.copy2(lic, OEBPS / "fonts" / lic.name)
 
     # images ---------------------------------------------------------------------
     P = ROOT / "assets/images/processed"
@@ -713,6 +717,9 @@ def build():
     for f in fonts:
         manifest.append('<item id="font-%s" href="fonts/%s" media-type="font/woff2"/>'
                         % (f.stem.lower().replace(".", "-"), f.name))
+    for lic in font_licenses:
+        manifest.append('<item id="lic-%s" href="fonts/%s" media-type="text/plain"/>'
+                        % (lic.stem.lower(), lic.name))
 
     opf = ('<?xml version="1.0" encoding="utf-8"?>\n'
            '<package xmlns="http://www.idpf.org/2007/opf" version="3.0" '
