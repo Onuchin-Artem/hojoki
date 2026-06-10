@@ -30,9 +30,12 @@ PLAUSIBLE_DOMAIN = "{{PLAUSIBLE_DOMAIN}}"
 CF_BEACON_TOKEN = "{{CF_BEACON_TOKEN}}"
 SITE_URL = "{{SITE_URL}}"
 
-DESCRIPTION = ("Український переклад «Ходзьокі» (方丈記) Камо но Тьомея — "
-               "медитація XIII століття про непостійність, самоту й спокій. "
-               "Переклад з англійської Артема Онучіна.")
+# back-cover description from the print edition (print/cover.typ), verse omitted
+DESCRIPTION = ("Класичний твір японської літератури, написаний 1212 року. "
+               "Монах-самітник згадує страждання, лиха і втрати, які випали на "
+               "його власне життя. Попри це він знаходить спокій у самотньому "
+               "житті, опорі на себе, єднанні з природою і зосередженні на "
+               "духовній практиці.")
 
 # Endnote order = first appearance across the whole body (matches build_body.py).
 NOTE_ORDER = [
@@ -607,6 +610,14 @@ def build(stage):
     )
     (OUT / "index.html").write_text(page, encoding="utf-8")
     write_llms_txt()
+
+    # downloadable editions: refresh web copies from the canonical builds
+    for name in ("hojoki.pdf", "hojoki.epub"):
+        src = ROOT / "build" / name
+        if src.exists():
+            shutil.copy2(src, OUT / name)
+        else:
+            print(f"WARNING: {src} missing — download link «{name}» will 404")
     print(f"index.html written (stage {stage}); notes: {len(used)}; chapters: "
           f"{sum(1 for t,_,_ in body if stage==2 or in_stage1(t))}")
 
