@@ -87,6 +87,7 @@ h2 {
 }
 .cover .cover-img, .cover img {
   display: block;
+  height: auto;              /* with width:auto + both max-* the ratio is kept */
   max-height: 92svh;
   width: auto;
   max-width: 100%;
