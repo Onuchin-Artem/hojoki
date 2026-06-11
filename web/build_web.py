@@ -661,7 +661,9 @@ def build(stage):
         "exampleOfWork": {"@type": "Book", "name": "方丈記 (Hōjōki)", "dateCreated": "1212"},
         "genre": ["дзуйхіцу", "класична японська література", "буддійська література"],
         "keywords": "Ходзьокі, Записки з келії, японська класика українською, "
-                    "буддійська поезія, непостійність, дзуйхіцу, Камо но Тьомей",
+                    "буддійська поезія, непостійність, дзуйхіцу, Камо но Тьомей, "
+                    "Garchen Buddhist Institute, Інститут Ґарчена, Ґарчен Рінпоче, "
+                    "Гарчен Рінпоче, ретріт",
     }
     jsonld_tag = ('<script type="application/ld+json">'
                   + json.dumps(ld, ensure_ascii=False) + '</script>')
@@ -699,6 +701,7 @@ PAGE = """<!DOCTYPE html>
 <meta property="book:tag" content="дзуйхіцу">
 <meta property="book:tag" content="японська класика">
 <meta property="book:tag" content="буддизм">
+<meta property="book:tag" content="Ґарчен">
 <meta property="og:locale" content="uk_UA">
 <meta property="og:site_name" content="Думки у ретрітній хатинці">
 <meta property="og:title" content="Думки у ретрітній хатинці (Ходзьокі) — Камо но Тьомей">
