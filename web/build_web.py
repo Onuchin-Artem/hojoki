@@ -433,7 +433,7 @@ def write_llms_txt():
 > Translated from English into Ukrainian by Artem Onuchin.
 
 - Title (uk): Думки у ретрітній хатинці
-- Original work: 方丈記 (Hōjōki), Kamo no Chōmei, 1212
+- Original work: 方丈記 (Hōjōki, укр. «Ходзьокі»), Kamo no Chōmei, 1212
 - Author: Камо но Тьомей (Kamo no Chōmei)
 - Translator: Артем Онучін (Artem Onuchin)
 - Editor: Анна Ігнатова (Anna Ihnatova)
@@ -634,7 +634,7 @@ def build(stage):
         "@context": "https://schema.org",
         "@type": "Book",
         "name": "Думки у ретрітній хатинці",
-        "alternateName": "Hōjōki / 方丈記",
+        "alternateName": ["Ходзьокі", "Hōjōki", "方丈記"],
         "inLanguage": "uk",
         "url": SITE_URL,
         "image": og_image,
@@ -682,12 +682,12 @@ PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Думки у ретрітній хатинці — Камо но Тьомей</title>
+<title>Думки у ретрітній хатинці (Ходзьокі) — Камо но Тьомей</title>
 <meta name="description" content="{description}">
 <meta property="og:type" content="book">
 <meta property="og:locale" content="uk_UA">
 <meta property="og:site_name" content="Думки у ретрітній хатинці">
-<meta property="og:title" content="Думки у ретрітній хатинці — Камо но Тьомей">
+<meta property="og:title" content="Думки у ретрітній хатинці (Ходзьокі) — Камо но Тьомей">
 <meta property="og:description" content="{description}">
 <meta property="og:url" content="{site_url}">
 <meta property="og:image" content="{og_image}">
