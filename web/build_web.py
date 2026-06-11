@@ -669,7 +669,11 @@ def build(stage):
                   + json.dumps(ld, ensure_ascii=False) + '</script>')
 
     page = PAGE.format(
-        body=body_html, css="style.css", umami_id=UMAMI_WEBSITE_ID,
+        # cache-bust the stylesheet per content hash so deploys show immediately
+        body=body_html,
+        css="style.css?v=" + __import__("hashlib").md5(
+            (OUT / "style.css").read_bytes()).hexdigest()[:10],
+        umami_id=UMAMI_WEBSITE_ID,
         description=html.escape(DESCRIPTION, quote=True), og_image=og_image,
         site_url=SITE_URL, jsonld=jsonld_tag,
     )
