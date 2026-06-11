@@ -483,12 +483,10 @@ def build(stage):
         _rgba.resize((ew, eh), Image.LANCZOS).save(IMGDIR / "enso.png")
         enso_dim = (ew, eh)
 
-        # favicons: the ensō tinted brand red, squared on transparent
+        # favicons: the original hand-drawn ink ensō, squared on transparent
         side = max(_e.size)
-        _red = Image.new("RGBA", _e.size, (228, 99, 64, 0))
-        _red.putalpha(_alpha)
         sq = Image.new("RGBA", (side, side), (0, 0, 0, 0))
-        sq.paste(_red, ((side - _e.width) // 2, (side - _e.height) // 2))
+        sq.paste(_rgba, ((side - _e.width) // 2, (side - _e.height) // 2))
         for s, name in ((32, "favicon-32.png"), (192, "favicon-192.png")):
             sq.resize((s, s), Image.LANCZOS).save(IMGDIR / name, "PNG", optimize=True)
         # apple-touch-icon: same mark on the paper tone (iOS dislikes transparency)
