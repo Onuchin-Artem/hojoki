@@ -605,8 +605,10 @@ def build(stage):
             "Редагування — Анна Ігнатова.",
             "Фотографії та каліграфія — Артем Онучін. Знято в ретрітному центрі "
             "Garchen Buddhist Institute.",
-            "Це другий повний український переклад «Ходзьокі» — перший з англійської "
-            "і перший за 92 роки, після перекладу Степана Левинського (Львів, 1934).",
+            "Це другий повний український переклад «Ходзьокі» (також відомої як "
+            "«Записки з келії») — пам'ятки класичної японської літератури в жанрі "
+            "дзуйхіцу. Перший переклад з англійської і перший за 92 роки, після "
+            "перекладу Степана Левинського (Львів, 1934).",
         ]
         license_p = ("Видання поширюється на умовах ліцензії Creative Commons «Зазначення "
                      "авторства — Некомерційна — 4.0 Міжнародна» "
@@ -657,6 +659,9 @@ def build(stage):
             "datePublished": "2024",
         },
         "exampleOfWork": {"@type": "Book", "name": "方丈記 (Hōjōki)", "dateCreated": "1212"},
+        "genre": ["дзуйхіцу", "класична японська література", "буддійська література"],
+        "keywords": "Ходзьокі, Записки з келії, японська класика українською, "
+                    "буддійська поезія, непостійність, дзуйхіцу, Камо но Тьомей",
     }
     jsonld_tag = ('<script type="application/ld+json">'
                   + json.dumps(ld, ensure_ascii=False) + '</script>')
@@ -689,6 +694,11 @@ PAGE = """<!DOCTYPE html>
 <title>Думки у ретрітній хатинці (Ходзьокі) — Камо но Тьомей</title>
 <meta name="description" content="{description}">
 <meta property="og:type" content="book">
+<meta property="book:author" content="Камо но Тьомей">
+<meta property="book:release_date" content="2026">
+<meta property="book:tag" content="дзуйхіцу">
+<meta property="book:tag" content="японська класика">
+<meta property="book:tag" content="буддизм">
 <meta property="og:locale" content="uk_UA">
 <meta property="og:site_name" content="Думки у ретрітній хатинці">
 <meta property="og:title" content="Думки у ретрітній хатинці (Ходзьокі) — Камо но Тьомей">
