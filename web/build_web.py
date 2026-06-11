@@ -25,10 +25,9 @@ IMGDIR = OUT / "assets" / "img"
 
 DONATE_URL = "https://savelife.in.ua/donate"
 CONTACT_EMAIL = "onuchinart@gmail.com"
-# find-replace placeholders, filled once hosting is set up:
-PLAUSIBLE_DOMAIN = "{{PLAUSIBLE_DOMAIN}}"
-CF_BEACON_TOKEN = "{{CF_BEACON_TOKEN}}"
-SITE_URL = "{{SITE_URL}}"
+# production: GitHub Pages + Umami Cloud (free tier, cookieless, custom events)
+SITE_URL = "https://hojoki.org.ua"
+UMAMI_WEBSITE_ID = "a7b22101-987f-4f0e-afb7-75dbcd3ca115"
 
 # back-cover description from the print edition (print/cover.typ), verse omitted
 DESCRIPTION = ("Класичний твір японської літератури, написаний 1212 року. "
@@ -64,10 +63,23 @@ def slug(s):
     out = re.sub(r"[^a-z0-9]+", "-", out).strip("-")
     return out or "x"
 
-# bind the author's name with NBSP so «Камо но Тьомей/Тьомея» never wraps
+NB = "\u00a0"
+
+# the японське «но» between capitalised words: «Камо но Тьомей», «Мінамото но Цуненобу»
+_NO_RE = re.compile(r"([А-ЯЇІЄҐ][а-яїієґʼ\u2019]+) но (?=[А-ЯЇІЄҐ])")
+# multi-word proper names that must never wrap (regexes cover inflections)
+_NAME_RES = [re.compile(p) for p in (
+    r"Метью Ставрос\w*", r"Matthew Stavros", r"Kamo no Ch\u014dmei",
+    r"Анн?[аіи]\w* Ігнатов\w+", r"Артем\w* Онучін\w*",
+    r"Бай Цзюї", r"Самі Мансей", r"Фудо Мьоо",
+    r"Дональд\w* Кін\w*", r"Степан\w* Левинськ\w*",
+    r"Будд\w+ Амітаб\w+",
+    r"Garchen Buddhist Institute", r"Tuttle Publishing",
+)]
 def bind_names(s):
-    s = s.replace("Камо но Тьоме", "Камо но Тьоме")
-    s = s.replace("Артем Онучін", "Артем Онучін")
+    s = _NO_RE.sub("\\1" + NB + "но" + NB, s)
+    for rx in _NAME_RES:
+        s = rx.sub(lambda m: m.group(0).replace(" ", NB), s)
     return s
 
 # Ukrainian typography: prepositions / short conjunctions should not dangle at a
@@ -85,7 +97,7 @@ _PREPS = (
 _PREP_RE = re.compile(r"\b(" + "|".join(sorted(_PREPS, key=len, reverse=True)) + r")[ \t]+",
                       re.IGNORECASE)
 def bind_preps(s):
-    return _PREP_RE.sub(lambda m: m.group(1) + " ", s)
+    return _PREP_RE.sub(lambda m: m.group(1) + NB, s)
 
 # ── inline markdown → HTML (preserves NBSP; html.escape leaves U+00A0 alone) ──
 def inline(s):
@@ -367,7 +379,7 @@ def figure(name, pic, alt, paras, eager=False):
 # ════════════════════════════════════════════════════════════════════════════
 def donate(label, location, cls):
     return (f'<a class="{cls}" href="{DONATE_URL}" target="_blank" rel="noopener" '
-            f'data-loc="{location}">{label}</a>')
+            f'data-umami-event="Donate" data-umami-event-location="{location}">{label}</a>')
 
 def support_block(location):
     return (
@@ -381,6 +393,36 @@ def support_block(location):
 
 def breath():
     return '<div class="breath" role="presentation" aria-hidden="true"></div>'
+
+def write_robots_sitemap():
+    """SEO/GEO: robots.txt (AI crawlers explicitly welcome — free CC book)
+    and a one-URL sitemap."""
+    robots = f"""User-agent: *
+Allow: /
+
+# AI crawlers welcome: CC BY-NC book, meant to be found and cited
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: CCBot
+Allow: /
+
+Sitemap: {SITE_URL}/sitemap.xml
+"""
+    (OUT / "robots.txt").write_text(robots, encoding="utf-8")
+    import datetime
+    today = datetime.date.today().isoformat()
+    sitemap = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f'  <url><loc>{SITE_URL}/</loc><lastmod>{today}</lastmod></url>\n'
+        '</urlset>\n')
+    (OUT / "sitemap.xml").write_text(sitemap, encoding="utf-8")
 
 def write_llms_txt():
     """GEO: a machine-readable summary for generative engines."""
@@ -441,6 +483,22 @@ def build(stage):
         _rgba.resize((ew, eh), Image.LANCZOS).save(IMGDIR / "enso.png")
         enso_dim = (ew, eh)
 
+        # favicons: the ensō tinted brand red, squared on transparent
+        side = max(_e.size)
+        _red = Image.new("RGBA", _e.size, (228, 99, 64, 0))
+        _red.putalpha(_alpha)
+        sq = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+        sq.paste(_red, ((side - _e.width) // 2, (side - _e.height) // 2))
+        for s, name in ((32, "favicon-32.png"), (192, "favicon-192.png")):
+            sq.resize((s, s), Image.LANCZOS).save(IMGDIR / name, "PNG", optimize=True)
+        # apple-touch-icon: same mark on the paper tone (iOS dislikes transparency)
+        apple = Image.new("RGBA", (side, side), (253, 252, 248, 255))
+        mark = sq.resize((round(side * 0.78),) * 2, Image.LANCZOS)
+        off = (side - mark.width) // 2
+        apple.paste(mark, (off, off), mark)
+        apple.convert("RGB").resize((180, 180), Image.LANCZOS).save(
+            IMGDIR / "apple-touch-icon.png", "PNG", optimize=True)
+
     H = []
     H.append('<article class="book">')
 
@@ -464,8 +522,8 @@ def build(stage):
         'ви можете підтримати тих, хто захищає Україну.</p>'
         '<div class="support-links">'
         + donate("Підтримати ЗСУ", "after-cover", "btn")
-        + '<a class="contact" href="hojoki.pdf" download>PDF</a>'
-        + '<a class="contact" href="hojoki.epub" download>EPUB</a>'
+        + '<a class="contact" href="hojoki.pdf" download data-umami-event="Download PDF">PDF</a>'
+        + '<a class="contact" href="hojoki.epub" download data-umami-event="Download EPUB">EPUB</a>'
         + f'<a class="contact" href="mailto:{CONTACT_EMAIL}">Написати перекладачу</a>'
         + f'<details class="toc"><summary>Зміст</summary><ol>{items}</ol></details>'
         + '</div></section>')
@@ -600,16 +658,15 @@ def build(stage):
     }
     jsonld_tag = ('<script type="application/ld+json">'
                   + json.dumps(ld, ensure_ascii=False) + '</script>')
-    cf_beacon = ('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
-                 'data-cf-beacon=\'{"token": "' + CF_BEACON_TOKEN + '"}\'></script>')
 
     page = PAGE.format(
-        body=body_html, css="style.css", plausible=PLAUSIBLE_DOMAIN, donate=DONATE_URL,
+        body=body_html, css="style.css", umami_id=UMAMI_WEBSITE_ID,
         description=html.escape(DESCRIPTION, quote=True), og_image=og_image,
-        site_url=SITE_URL, jsonld=jsonld_tag, cf_beacon=cf_beacon,
+        site_url=SITE_URL, jsonld=jsonld_tag,
     )
     (OUT / "index.html").write_text(page, encoding="utf-8")
     write_llms_txt()
+    write_robots_sitemap()
 
     # downloadable editions: refresh web copies from the canonical builds
     for name in ("hojoki.pdf", "hojoki.epub"):
@@ -644,19 +701,16 @@ PAGE = """<!DOCTYPE html>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:wght@500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:wght@500&display=swap">
 <link rel="stylesheet" href="{css}">
-<script defer data-domain="{plausible}" src="https://plausible.io/js/script.tagged-events.js"></script>
-{cf_beacon}
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/img/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<script defer src="https://cloud.umami.is/script.js" data-website-id="{umami_id}"></script>
 </head>
 <body>
 {body}
 <script>
 (function() {{
-  // Donate-click custom event (Plausible, cookieless). Works for all donate links.
-  document.addEventListener('click', function(e) {{
-    var a = e.target.closest('a[href="{donate}"]');
-    if (!a) return;
-    if (window.plausible) window.plausible('Donate', {{props: {{location: a.dataset.loc || 'unknown'}}}});
-  }}, true);
+  // Donate / download events: tracked via data-umami-event attributes (Umami).
 
   // Footnotes: desktop → floating marginalia next to the line; mobile → jump.
   var DESKTOP = window.matchMedia('(min-width: 980px)');

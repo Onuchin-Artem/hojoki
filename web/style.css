@@ -365,3 +365,10 @@ h2 {
   width: min(320px, 70vw);
   height: auto;               /* transparent PNG — no blend needed */
 }
+
+/* mobile: support buttons sized to share one line */
+@media (max-width: 640px) {
+  .support-links { gap: 0.7rem; }
+  .btn { font-size: 0.78rem; padding: 0.45em 0.9em; }
+  .contact, .support-links .toc summary { font-size: 0.78rem; }
+}

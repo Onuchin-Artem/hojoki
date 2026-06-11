@@ -16,7 +16,7 @@
 - Significance: second complete Ukrainian translation of Hōjōki; the first from
   English, and the first in 92 years (after Stepan Levynskyi, Lviv, 1934)
 - Contact: onuchinart@gmail.com
-- URL: {{SITE_URL}}
+- URL: https://hojoki.org.ua
 
 ## Structure
 Front matter (foreword, gratitude, the poem «Зречення»), a prologue and 15 verse

@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# AI crawlers welcome: CC BY-NC book, meant to be found and cited
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://hojoki.org.ua/sitemap.xml

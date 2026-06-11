@@ -54,16 +54,54 @@ SIG_BREAKS = {"написано під час роботи над перекла
 
 def nbsp(s):
     """NBSP before em-dash; idempotent (existing NBSP are left alone)."""
-    return s.replace(" —", " —")
+    return s.replace(" \u2014", "\u00a0\u2014")
 
 def strip_breaks(line):
     """Print hard-break artefacts (' \\' mid-line) -> reflow space."""
     return re.sub(r"\s*\\\s*", " ", line).strip()
 
+NB = "\u00a0"
+
+# the японське «но» between capitalised words: «Камо но Тьомей», «Мінамото но Цуненобу»
+_NO_RE = re.compile(r"([А-ЯЇІЄҐ][а-яїієґʼ\u2019]+) но (?=[А-ЯЇІЄҐ])")
+# multi-word proper names that must never wrap (regexes cover inflections)
+_NAME_RES = [re.compile(p) for p in (
+    r"Метью Ставрос\w*", r"Matthew Stavros", r"Kamo no Ch\u014dmei",
+    r"Анн?[аіи]\w* Ігнатов\w+", r"Артем\w* Онучін\w*",
+    r"Бай Цзюї", r"Самі Мансей", r"Фудо Мьоо",
+    r"Дональд\w* Кін\w*", r"Степан\w* Левинськ\w*",
+    r"Будд\w+ Амітаб\w+",
+    r"Garchen Buddhist Institute", r"Tuttle Publishing",
+)]
+def bind_names(s):
+    s = _NO_RE.sub("\\1" + NB + "но" + NB, s)
+    for rx in _NAME_RES:
+        s = rx.sub(lambda m: m.group(0).replace(" ", NB), s)
+    return s
+
+# Ukrainian typography: prepositions / short conjunctions should not dangle at
+# a line end — glue them to the next word with NBSP (same list as the web).
+_PREPS = (
+    # simple prepositions (incl. phonetic variants)
+    "у в з із зі зо за к ік о об на над наді під піді по при про від для до без "
+    "перед переді через понад попід попри поза позаду поперед посеред поверх повз "
+    "проти протягом біля близько коло кругом крізь між межи поміж серед "
+    "окрім крім опріч замість заради ради навколо довкола обабіч обіч осторонь "
+    "поблизу поруч поряд услід назустріч наперекір внаслідок унаслідок впродовж упродовж щодо "
+    # short conjunctions / particles that shouldn't dangle at a line end
+    "і й та а чи ні бо аби"
+).split()
+_PREP_RE = re.compile(r"\b(" + "|".join(sorted(_PREPS, key=len, reverse=True)) + r")[ \t]+",
+                      re.IGNORECASE)
+def bind_preps(s):
+    return _PREP_RE.sub(lambda m: m.group(1) + NB, s)
+
 def inline(s):
     """Inline markdown -> XHTML. Escapes markup; NBSP survive html.escape."""
     s = html.escape(s, quote=False)
     s = nbsp(s)
+    s = bind_names(s)
+    s = bind_preps(s)
     s = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", s)            # links -> text (print parity)
     s = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", s)
