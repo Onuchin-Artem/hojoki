@@ -29,8 +29,9 @@ CONTACT_EMAIL = "onuchinart@gmail.com"
 SITE_URL = "https://hojoki.org.ua"
 UMAMI_WEBSITE_ID = "a7b22101-987f-4f0e-afb7-75dbcd3ca115"
 
-# back-cover description from the print edition (print/cover.typ), verse omitted
-DESCRIPTION = ("Класичний твір японської літератури, написаний 1212 року. "
+# back-cover description from the print edition (print/cover.typ), verse omitted;
+# web-only: «Ходзьокі» added as the lead for search-snippet keyword matching
+DESCRIPTION = ("«Ходзьокі» — класичний твір японської літератури, написаний 1212 року. "
                "Монах-самітник згадує страждання, лиха і втрати, які випали на "
                "його власне життя. Попри це він знаходить спокій у самотньому "
                "житті, опорі на себе, єднанні з природою і зосередженні на "
