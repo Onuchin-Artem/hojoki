@@ -367,6 +367,11 @@ h2 {
   height: auto;               /* transparent PNG — no blend needed */
 }
 
+/* mobile: cover sized to content, not the full screen (no dead gap below) */
+@media (max-width: 640px) {
+  .cover { height: auto; padding: 1.6rem 1.2rem 0.4rem; }
+}
+
 /* mobile: support buttons sized to share one line */
 @media (max-width: 640px) {
   .support-links { gap: 0.7rem; }
