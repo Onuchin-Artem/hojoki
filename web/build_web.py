@@ -435,6 +435,8 @@ def write_llms_txt():
 
 - Title (uk): Думки у ретрітній хатинці
 - Original work: 方丈記 (Hōjōki, укр. «Ходзьокі»), Kamo no Chōmei, 1212
+- Alternate Ukrainian titles of the work: «Записки з келії», «Записки з хатини»,
+  «Ґоджьокі» (Levynskyi's 1934 title)
 - Author: Камо но Тьомей (Kamo no Chōmei)
 - Translator: Артем Онучін (Artem Onuchin)
 - Editor: Анна Ігнатова (Anna Ihnatova)
@@ -635,7 +637,8 @@ def build(stage):
         "@context": "https://schema.org",
         "@type": "Book",
         "name": "Думки у ретрітній хатинці",
-        "alternateName": ["Ходзьокі", "Hōjōki", "方丈記"],
+        "alternateName": ["Ходзьокі", "Записки з келії", "Записки з хатини",
+                          "Hōjōki", "方丈記"],
         "inLanguage": "uk",
         "url": SITE_URL,
         "image": og_image,
