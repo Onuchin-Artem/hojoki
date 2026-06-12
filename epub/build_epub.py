@@ -62,13 +62,13 @@ def strip_breaks(line):
 
 NB = "\u00a0"
 
-# the японське «но» between capitalised words: «Камо но Тьомей», «Мінамото но Цуненобу»
+# the японське «но» between capitalised words: «Камо но Чьомей», «Мінамото но Цуненобу»
 _NO_RE = re.compile(r"([А-ЯЇІЄҐ][а-яїієґʼ\u2019]+) но (?=[А-ЯЇІЄҐ])")
 # multi-word proper names that must never wrap (regexes cover inflections)
 _NAME_RES = [re.compile(p) for p in (
     r"Метью Ставрос\w*", r"Matthew Stavros", r"Kamo no Ch\u014dmei",
     r"Анн?[аіи]\w* Ігнатов\w+", r"Артем\w* Онучін\w*",
-    r"Бай Цзюї", r"Самі Мансей", r"Фудо Мьоо",
+    r"Бай Цзюї", r"Шямі Мансей", r"Фудо Мьоо",
     r"Дональд\w* Кін\w*", r"Степан\w* Левинськ\w*",
     r"Будд\w+ Амітаб\w+",
     r"Garchen Buddhist Institute", r"Tuttle Publishing",
@@ -591,7 +591,7 @@ def build():
     docs.append(("cover.xhtml", "Обкладинка", page(
         "Думки у ретрітній хатинці",
         '<figure class="cover-figure"><img src="img/cover.jpg" '
-        'alt="Обкладинка книги «Думки у ретрітній хатинці» з каліграфією Ходзьокі"/></figure>',
+        'alt="Обкладинка книги «Думки у ретрітній хатинці» з каліграфією Ходжьокі"/></figure>',
         body_class="cover-page", epub_type="cover"), False))
 
     docs.append(("nav.xhtml", "Зміст", None, False))   # placeholder, written below
@@ -616,7 +616,7 @@ def build():
     # title page
     docs.append(("titlepage.xhtml", book_title, page(book_title,
         '<section class="title-page" epub:type="titlepage">'
-        '<p class="title-author">Камо но Тьомей</p>'
+        '<p class="title-author">Камо но Чьомей</p>'
         '<h1 class="book-title">%s</h1>'
         '<p class="title-translator">Переклад з англійської — Артем Онучін</p>'
         '</section>' % html.escape(book_title)), False))
@@ -766,7 +766,7 @@ def build():
            '<dc:identifier id="uid">urn:uuid:%s</dc:identifier>\n'
            '<dc:title>Думки у ретрітній хатинці</dc:title>\n'
            '<dc:language>uk</dc:language>\n'
-           '<dc:creator id="aut">Камо но Тьомей</dc:creator>\n'
+           '<dc:creator id="aut">Камо но Чьомей</dc:creator>\n'
            '<meta refines="#aut" property="role" scheme="marc:relators">aut</meta>\n'
            '<dc:contributor id="trl">Артем Онучін</dc:contributor>\n'
            '<meta refines="#trl" property="role" scheme="marc:relators">trl</meta>\n'

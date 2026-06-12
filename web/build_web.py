@@ -30,8 +30,8 @@ SITE_URL = "https://hojoki.org.ua"
 UMAMI_WEBSITE_ID = "a7b22101-987f-4f0e-afb7-75dbcd3ca115"
 
 # back-cover description from the print edition (print/cover.typ), verse omitted;
-# web-only: «Ходзьокі» added as the lead for search-snippet keyword matching
-DESCRIPTION = ("«Ходзьокі» — класичний твір японської літератури, написаний 1212 року. "
+# web-only: «Ходжьокі» added as the lead for search-snippet keyword matching
+DESCRIPTION = ("«Ходжьокі» — класичний твір японської літератури, написаний 1212 року. "
                "Монах-самітник згадує страждання, лиха і втрати, які випали на "
                "його власне життя. Попри це він знаходить спокій у самотньому "
                "житті, опорі на себе, єднанні з природою і зосередженні на "
@@ -66,13 +66,13 @@ def slug(s):
 
 NB = "\u00a0"
 
-# the японське «но» between capitalised words: «Камо но Тьомей», «Мінамото но Цуненобу»
+# the японське «но» between capitalised words: «Камо но Чьомей», «Мінамото но Цуненобу»
 _NO_RE = re.compile(r"([А-ЯЇІЄҐ][а-яїієґʼ\u2019]+) но (?=[А-ЯЇІЄҐ])")
 # multi-word proper names that must never wrap (regexes cover inflections)
 _NAME_RES = [re.compile(p) for p in (
     r"Метью Ставрос\w*", r"Matthew Stavros", r"Kamo no Ch\u014dmei",
     r"Анн?[аіи]\w* Ігнатов\w+", r"Артем\w* Онучін\w*",
-    r"Бай Цзюї", r"Самі Мансей", r"Фудо Мьоо",
+    r"Бай Цзюї", r"Шямі Мансей", r"Фудо Мьоо",
     r"Дональд\w* Кін\w*", r"Степан\w* Левинськ\w*",
     r"Будд\w+ Амітаб\w+",
     r"Garchen Buddhist Institute", r"Tuttle Publishing",
@@ -434,10 +434,11 @@ def write_llms_txt():
 > Translated from English into Ukrainian by Artem Onuchin.
 
 - Title (uk): Думки у ретрітній хатинці
-- Original work: 方丈記 (Hōjōki, укр. «Ходзьокі»), Kamo no Chōmei, 1212
-- Alternate Ukrainian titles of the work: «Записки з келії», «Записки з хатини»,
+- Original work: 方丈記 (Hōjōki, укр. «Ходжьокі»), Kamo no Chōmei, 1212
+- Alternate Ukrainian titles of the work: «Ходзьокі» (older transliteration),
+  «Записки з келії», «Записки з хатини»,
   «Ґоджьокі» (Levynskyi's 1934 title)
-- Author: Камо но Тьомей (Kamo no Chōmei)
+- Author: Камо но Чьомей (Kamo no Chōmei; older Ukrainian transliteration: Камо но Тьомей)
 - Translator: Артем Онучін (Artem Onuchin)
 - Editor: Анна Ігнатова (Anna Ihnatova)
 - Source edition: Kamo no Chōmei, *Hōjōki: A Buddhist Reflection on Solitude,
@@ -454,7 +455,7 @@ Front matter (foreword, gratitude, the poem «Зречення»), a prologue an
 chapters, 10 endnotes, and a colophon.
 
 ## Citation
-Attribute the translation to Артем Онучін and the original to Камо но Тьомей.
+Attribute the translation to Артем Онучін and the original to Камо но Чьомей.
 Reuse under CC BY-NC 4.0 (non-commercial, with attribution).
 """
     (OUT / "llms.txt").write_text(txt, encoding="utf-8")
@@ -505,7 +506,7 @@ def build(stage):
 
     # 1. cover (entry screen) --------------------------------------------------
     cover_img = picture(cover_pic,
-        "Обкладинка книги «Думки у ретрітній хатинці» з каліграфією 方丈記 (Ходзьокі)",
+        "Обкладинка книги «Думки у ретрітній хатинці» з каліграфією 方丈記 (Ходжьокі)",
         "100vw", cls="cover-img", eager=True)
     H.append(f'<header class="cover" id="top">{cover_img}</header>')
 
@@ -546,7 +547,7 @@ def build(stage):
 
     # 7. title page ------------------------------------------------------------
     H.append(f'<header class="title-page" id="{slug(book_title)}">'
-             f'<p class="title-author">{bind_names("Камо но Тьомей")}</p>'
+             f'<p class="title-author">{bind_names("Камо но Чьомей")}</p>'
              f'<h1>{html.escape(book_title)}</h1>'
              f'<p class="title-translator">{bind_names("Переклад з англійської — Артем Онучін")}</p>'
              f'</header>')
@@ -605,7 +606,7 @@ def build(stage):
             "Редагування — Анна Ігнатова.",
             "Фотографії та каліграфія — Артем Онучін. Знято в ретрітному центрі "
             "Garchen Buddhist Institute.",
-            "Це другий повний український переклад «Ходзьокі» (також відомої як "
+            "Це другий повний український переклад «Ходжьокі» (також відомої як "
             "«Записки з келії») — пам'ятки класичної японської літератури в жанрі "
             "дзуйхіцу. Перший переклад з англійської і перший за 92 роки, після "
             "перекладу Степана Левинського (Львів, 1934).",
@@ -639,12 +640,12 @@ def build(stage):
         "@context": "https://schema.org",
         "@type": "Book",
         "name": "Думки у ретрітній хатинці",
-        "alternateName": ["Ходзьокі", "Записки з келії", "Записки з хатини",
+        "alternateName": ["Ходжьокі", "Ходзьокі", "Записки з келії", "Записки з хатини",
                           "Hōjōki", "方丈記"],
         "inLanguage": "uk",
         "url": SITE_URL,
         "image": og_image,
-        "author": {"@type": "Person", "name": "Камо но Тьомей", "alternateName": "Kamo no Chōmei"},
+        "author": {"@type": "Person", "name": "Камо но Чьомей", "alternateName": ["Kamo no Chōmei", "Камо но Тьомей"]},
         "translator": {"@type": "Person", "name": "Артем Онучін"},
         "editor": {"@type": "Person", "name": "Анна Ігнатова"},
         "datePublished": "2026",
@@ -660,9 +661,9 @@ def build(stage):
         },
         "exampleOfWork": {"@type": "Book", "name": "方丈記 (Hōjōki)", "dateCreated": "1212"},
         "genre": ["дзуйхіцу", "класична японська література", "буддійська література"],
-        "keywords": "Ходзьокі, Записки з келії, японська класика українською, "
-                    "буддійська поезія, непостійність, дзуйхіцу, Камо но Тьомей, "
-                    "Garchen Buddhist Institute, Інститут Ґарчена, Ґарчен Рінпоче, "
+        "keywords": "Ходжьокі, Ходзьокі, Записки з келії, японська класика українською, "
+                    "буддійська поезія, непостійність, дзуйхіцу, Камо но Чьомей, "
+                    "Камо но Тьомей, Garchen Buddhist Institute, Інститут Ґарчена, Ґарчен Рінпоче, "
                     "Гарчен Рінпоче, ретріт",
     }
     jsonld_tag = ('<script type="application/ld+json">'
@@ -697,10 +698,10 @@ PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Думки у ретрітній хатинці (Ходзьокі) — Камо но Тьомей</title>
+<title>Думки у ретрітній хатинці (Ходжьокі) — Камо но Чьомей</title>
 <meta name="description" content="{description}">
 <meta property="og:type" content="book">
-<meta property="book:author" content="Камо но Тьомей">
+<meta property="book:author" content="Камо но Чьомей">
 <meta property="book:release_date" content="2026">
 <meta property="book:tag" content="дзуйхіцу">
 <meta property="book:tag" content="японська класика">
@@ -708,7 +709,7 @@ PAGE = """<!DOCTYPE html>
 <meta property="book:tag" content="Ґарчен">
 <meta property="og:locale" content="uk_UA">
 <meta property="og:site_name" content="Думки у ретрітній хатинці">
-<meta property="og:title" content="Думки у ретрітній хатинці (Ходзьокі) — Камо но Тьомей">
+<meta property="og:title" content="Думки у ретрітній хатинці (Ходжьокі) — Камо но Чьомей">
 <meta property="og:description" content="{description}">
 <meta property="og:url" content="{site_url}">
 <meta property="og:image" content="{og_image}">

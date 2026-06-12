@@ -5,10 +5,11 @@
 > Translated from English into Ukrainian by Artem Onuchin.
 
 - Title (uk): Думки у ретрітній хатинці
-- Original work: 方丈記 (Hōjōki, укр. «Ходзьокі»), Kamo no Chōmei, 1212
-- Alternate Ukrainian titles of the work: «Записки з келії», «Записки з хатини»,
+- Original work: 方丈記 (Hōjōki, укр. «Ходжьокі»), Kamo no Chōmei, 1212
+- Alternate Ukrainian titles of the work: «Ходзьокі» (older transliteration),
+  «Записки з келії», «Записки з хатини»,
   «Ґоджьокі» (Levynskyi's 1934 title)
-- Author: Камо но Тьомей (Kamo no Chōmei)
+- Author: Камо но Чьомей (Kamo no Chōmei; older Ukrainian transliteration: Камо но Тьомей)
 - Translator: Артем Онучін (Artem Onuchin)
 - Editor: Анна Ігнатова (Anna Ihnatova)
 - Source edition: Kamo no Chōmei, *Hōjōki: A Buddhist Reflection on Solitude,
@@ -25,5 +26,5 @@ Front matter (foreword, gratitude, the poem «Зречення»), a prologue an
 chapters, 10 endnotes, and a colophon.
 
 ## Citation
-Attribute the translation to Артем Онучін and the original to Камо но Тьомей.
+Attribute the translation to Артем Онучін and the original to Камо но Чьомей.
 Reuse under CC BY-NC 4.0 (non-commercial, with attribution).
